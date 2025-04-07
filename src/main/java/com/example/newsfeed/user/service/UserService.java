@@ -1,7 +1,9 @@
 package com.example.newsfeed.user.service;
 
-import com.example.newsfeed.user.dto.SignUpResponseDto;
-import com.example.newsfeed.user.dto.UserResponseDto;
+import com.example.newsfeed.exception.CustomException;
+import com.example.newsfeed.exception.ErrorCode;
+import com.example.newsfeed.user.dto.response.SignUpResponseDto;
+import com.example.newsfeed.user.dto.response.UserResponseDto;
 import com.example.newsfeed.user.entity.User;
 import com.example.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -25,22 +27,21 @@ public class UserService {
     @Transactional
     public UserResponseDto updateUser(Long id, String username, String email, String password) {
         User findUser = userRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Does not exist id : " + id));
+                new CustomException(ErrorCode.USER_NOT_FOUND));
         if (!findUser.getPassword().equals(password)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
         findUser.updateUser(username, email, password);
         return new UserResponseDto(findUser);
     }
 
+    @Transactional
     public UserResponseDto updatePassword(Long id, String oldPassword, String newPassword) {
         User findUser = userRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Does not exist id : " + id));
+                new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (!findUser.getPassword().equals(oldPassword)){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
         findUser.updatePassword(newPassword);
         return new UserResponseDto(findUser);
@@ -48,10 +49,9 @@ public class UserService {
 
     public void delete(Long id, String password) {
         User findUser = userRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Does not exist id : " + id));
+                new CustomException(ErrorCode.USER_NOT_FOUND));
         if (!findUser.getPassword().equals(password)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
         userRepository.delete(findUser);
     }

@@ -1,6 +1,10 @@
 package com.example.newsfeed.user.controller;
 
-import com.example.newsfeed.user.dto.*;
+import com.example.newsfeed.user.dto.request.SignUpRequestDto;
+import com.example.newsfeed.user.dto.request.UpdatePasswordRequestDto;
+import com.example.newsfeed.user.dto.request.UpdateUserRequestDto;
+import com.example.newsfeed.user.dto.response.SignUpResponseDto;
+import com.example.newsfeed.user.dto.response.UserResponseDto;
 import com.example.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
