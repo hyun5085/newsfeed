@@ -2,15 +2,16 @@ package com.example.newsfeed.user.service;
 
 import com.example.newsfeed.exception.CustomException;
 import com.example.newsfeed.exception.ErrorCode;
+import com.example.newsfeed.user.dto.request.DeleteUserRequestDto;
+import com.example.newsfeed.user.dto.request.UpdatePasswordRequestDto;
+import com.example.newsfeed.user.dto.request.UpdateUserRequestDto;
 import com.example.newsfeed.user.dto.response.SignUpResponseDto;
 import com.example.newsfeed.user.dto.response.UserResponseDto;
 import com.example.newsfeed.user.entity.User;
 import com.example.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 
@@ -33,41 +34,31 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateUser(Long id, String username, String email, String password, LocalDate birthday, String hobby, Long userId) {
-        User findUser = userRepository.findById(id).orElseThrow(() ->
+    public UserResponseDto updateUser(UpdateUserRequestDto requestDto, Long loginUserId) {
+        User findUser = userRepository.findById(loginUserId).orElseThrow(() ->
                 new CustomException(ErrorCode.USER_NOT_FOUND));
-        if (!findUser.getId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자 정보가 일치하지 않습니다.");
-        }
-
-        if (!findUser.getPassword().equals(password)) {
+        if (!findUser.getPassword().equals(requestDto.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
-        findUser.updateUser(username, email, password, birthday, hobby);
+        findUser.updateUser(requestDto.getUsername(), requestDto.getEmail(), requestDto.getPassword(), requestDto.getBirthday(), requestDto.getHobby());
         return new UserResponseDto(findUser);
     }
 
     @Transactional
-    public UserResponseDto updatePassword(Long id, String oldPassword, String newPassword, Long userId) {
-        User findUser = userRepository.findById(id).orElseThrow(() ->
+    public UserResponseDto updatePassword(UpdatePasswordRequestDto requestDto, Long loginUserId) {
+        User findUser = userRepository.findById(loginUserId).orElseThrow(() ->
                 new CustomException(ErrorCode.USER_NOT_FOUND));
-//        if (!findUser.getId().equals(userId)) {
-//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자 정보가 일치하지 않습니다.");
-//        }
-        if (!findUser.getPassword().equals(oldPassword)){
+        if (!findUser.getPassword().equals(requestDto.getOldPassword())){
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
-        findUser.updatePassword(newPassword);
+        findUser.updatePassword(requestDto.getNewPassword());
         return new UserResponseDto(findUser);
     }
 
-    public void delete(Long id, String password, Long userId) {
-        User findUser = userRepository.findById(id).orElseThrow(() ->
+    public void delete(DeleteUserRequestDto requestDto, Long loginUserId) {
+        User findUser = userRepository.findById(loginUserId).orElseThrow(() ->
                 new CustomException(ErrorCode.USER_NOT_FOUND));
-//        if (!findUser.getId().equals(userId)) {
-//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자 정보가 일치하지 않습니다.");
-//        }
-        if (!findUser.getPassword().equals(password)) {
+        if (!findUser.getPassword().equals(requestDto.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
         userRepository.delete(findUser);

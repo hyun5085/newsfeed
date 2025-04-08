@@ -36,43 +36,40 @@ public class UserController {
         UserResponseDto userResponseDto = userService.findById(id);
         return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }
-
-
-    @PutMapping("/users/{id}")
+//    살려주세요 살려주시라요 살려주시지요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    @PutMapping("/users")
     public ResponseEntity<UserResponseDto> updateUser(
-            @PathVariable Long id,
-            @RequestBody @Valid UpdateUserRequestDto requestDto,
+            @Valid @RequestBody UpdateUserRequestDto requestDto,
             HttpServletRequest request
     ) {
         HttpSession session = request.getSession();
-        LoginResponseDto responseDto = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
-        userService.updateUser(
-                id,requestDto.getUsername(), requestDto.getEmail(), requestDto.getPassword(),
-                requestDto.getBirthday(), requestDto.getHobby(), responseDto.getId());
-        return new ResponseEntity<>(HttpStatus.OK);
+        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+        Long loginUserId = loginUser.getId();
+        UserResponseDto responseDto = userService.updateUser(requestDto, loginUserId);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @PatchMapping("/users/{id}")
+    @PatchMapping("/users")
     public ResponseEntity<UserResponseDto> updatePassword(
-            @PathVariable @Valid Long id,
-            @RequestBody UpdatePasswordRequestDto requestDto,
+            @Valid @RequestBody UpdatePasswordRequestDto requestDto,
             HttpServletRequest request
     ) {
         HttpSession session = request.getSession();
-        LoginResponseDto responseDto = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
-        userService.updatePassword(id, requestDto.getOldPassword(), requestDto.getNewPassword(), responseDto.getId());
-        return new ResponseEntity<>(HttpStatus.OK);
+        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+        Long loginUserId = loginUser.getId();
+        UserResponseDto responseDto = userService.updatePassword(requestDto, loginUserId);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/users")
     public ResponseEntity<Void> delete(
-            @PathVariable Long id,
-            @RequestBody @Valid DeleteUserRequestDto requestDto,
+            @Valid @RequestBody DeleteUserRequestDto requestDto,
             HttpServletRequest request
     ) {
         HttpSession session = request.getSession();
-        LoginResponseDto responseDto = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
-        userService.delete(id, requestDto.getPassword(), responseDto.getId());
+        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+        Long loginUserId = loginUser.getId();
+        userService.delete(requestDto, loginUserId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
