@@ -1,8 +1,7 @@
-package com.example.newsfeed.comment.dto;
+package com.example.newsfeed.comment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
