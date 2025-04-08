@@ -20,7 +20,7 @@ public class User extends BaseEntity {
     private String email;
 
     @Column(nullable = false)
-//    @Convert(converter = PasswordConverter.class)
+    @Convert(converter = PasswordConverter.class)
     private String password;
 
     public User() {
