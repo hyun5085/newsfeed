@@ -1,19 +1,25 @@
 package com.example.newsfeed.comment.service;
 
-import com.example.newsfeed.comment.dto.CommentUpdateRequestDto;
-import com.example.newsfeed.comment.dto.CreateCommentRequestDto;
-import com.example.newsfeed.comment.dto.CommentResponseDto;
-import com.example.newsfeed.comment.dto.CreateCommentResponseDto;
-import com.example.newsfeed.comment.entity.Board;
+import com.example.newsfeed.comment.dto.request.CommentUpdateRequestDto;
+import com.example.newsfeed.comment.dto.request.CreateCommentRequestDto;
+import com.example.newsfeed.comment.dto.response.CommentResponseDto;
+import com.example.newsfeed.comment.dto.response.CreateCommentResponseDto;
+import com.example.newsfeed.board.entity.Board;
 import com.example.newsfeed.comment.entity.Comment;
-import com.example.newsfeed.comment.repository.BoardRepository;
+import com.example.newsfeed.board.repository.BoardRepository;
 import com.example.newsfeed.comment.repository.CommentRepository;
-import com.example.newsfeed.comment.repository.UserRepository;
+import com.example.newsfeed.exception.CustomException;
+import com.example.newsfeed.exception.ErrorCode;
+import com.example.newsfeed.user.entity.User;
+import com.example.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.List;
 
@@ -28,24 +34,28 @@ public class CommentService {
 
     /**
      * boardId의 게시물에 댓글 저장
+     *
      * @param boardId
      * @param requestDto
      * @return
      */
     @Transactional
-    public CreateCommentResponseDto save(Long boardId, CreateCommentRequestDto requestDto) {
+    public CreateCommentResponseDto save(Long userId, Long boardId, CreateCommentRequestDto requestDto) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
 
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 게시글이 존재하지 않습니다.")
+                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
         );
-        Comment comment = new Comment(board, requestDto.getContents());
+        Comment comment = new Comment(user, board, requestDto.getContents());
         commentRepository.save(comment);
 
         return new CreateCommentResponseDto(
                 comment.getId(),
-                comment.getBoard().getId(),
-                comment.getUser().getId(),
-                comment.getUser().getUsername(),
+                board.getId(),
+                user.getId(),
+                user.getUsername(),
                 comment.getContents(),
                 comment.getCreatedAt()
         );
@@ -54,18 +64,18 @@ public class CommentService {
     /**
      * boardId의 게시물에 작성된 댓글 전체 조회
      * 최신순으로 정렬
+     *
      * @param boardId
      * @return List<CommentResponseDto>
      */
     @Transactional(readOnly = true)
     public List<CommentResponseDto> findCommentsByBoardId(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 게시글이 존재하지 않습니다.")
+                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
         );
-
         List<Comment> commentList = commentRepository.findByBoardIdOrderByUpdatedAtDesc(board.getId());
         if (commentList.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
         return commentList.stream().map(comment ->
@@ -83,6 +93,7 @@ public class CommentService {
 
     /**
      * boardId에 해당하는 게시글의 댓글 단건 조회
+     *
      * @param boardId
      * @param id
      * @return CommentResponseDto
@@ -90,7 +101,7 @@ public class CommentService {
     @Transactional(readOnly = true)
     public CommentResponseDto findByBoardId(Long boardId, Long id) {
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물을 찾을 수 없습니다.")
+                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
         );
         Comment comment = commentRepository.findByBoardId(board.getId());
         return new CommentResponseDto(
@@ -107,15 +118,21 @@ public class CommentService {
     /**
      * 댓글 수정
      * 댓글 작성자만 수정 가능
+     *
      * @param id
      * @param requestDto
      * @return
      */
     @Transactional
-    public CommentResponseDto updateComments(Long id, CommentUpdateRequestDto requestDto) {
+    public CommentResponseDto updateComments(Long id, Long userId, CommentUpdateRequestDto requestDto) {
+
+
         Comment findComment = commentRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다.")
+                () -> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
+        if (!findComment.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.COMMENT_UPDATE_UNAUTHORIZED);
+        }
         findComment.update(requestDto.getContents());
         return new CommentResponseDto(
                 findComment.getId(),
@@ -131,16 +148,38 @@ public class CommentService {
     /**
      * 댓글 삭제
      * 댓글 작성자, 게시글 작성자만 삭제 가능
+     *
      * @param id
      * @return
      */
     @Transactional
-    public String deleteComment(Long id) {
+    public String deleteComment(Long id, Long userId) {
         Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("댓글을 찾을 수 업습니다.")
+                () -> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
+        if (!comment.getUser().getId().equals(userId) || !comment.getBoard().getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.COMMENT_DELETE_UNAUTHORIZED);
+        }
         commentRepository.delete(comment);
         return "삭제되었습니다";
     }
 
+//    public Page<CommentResponseDto> findCommentsPaged(Long boardId, int page, int size) {
+//        Board board = boardRepository.findById(boardId).orElseThrow(
+//                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
+//        Page<Comment> page = commentRepository.findAllByBoard_Id(board.getId(), pageable);
+//
+//        Page<CommentResponseDto> dtoPage = page.map(c -> new CommentResponseDto(
+//                c.getId(),
+//                c.getBoard().getId(),
+//                c.getUser().getId(),
+//                c.getUser().getUsername(),
+//                c.getContents(),
+//                c.getCreatedAt(),
+//                c.getUpdatedAt()
+//        ));
+//        return dtoPage;
+//    }
 }
+
