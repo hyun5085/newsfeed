@@ -1,5 +1,6 @@
 package com.example.newsfeed.cookiesession.filter;
 
+import com.example.newsfeed.common.Const;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,7 +44,7 @@ public class LoginFilter implements Filter {
             HttpSession session = httpRequest.getSession(false);
 
             // 7. 세션이 없거나 "LOGIN_USER"가 없으면 로그인하지 않은 상태로 간주
-            if(session == null || session.getAttribute("LOGIN_USER") == null){
+            if(session == null || session.getAttribute(Const.LOGIN_USER) == null){
 
                 // 8. 로그인하지 않은 상태라면 예외를 던집니다.
                 throw new RuntimeException("로그인 해주세요.");

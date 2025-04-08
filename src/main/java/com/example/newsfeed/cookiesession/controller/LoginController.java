@@ -3,7 +3,7 @@ package com.example.newsfeed.cookiesession.controller;
 import com.example.newsfeed.common.Const;
 import com.example.newsfeed.cookiesession.dto.LoginRequestDto;
 import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
-import com.example.newsfeed.cookiesession.repository.LoginRepository;
+import com.example.newsfeed.cookiesession.dto.LoginSuccessResponseDto;
 import com.example.newsfeed.cookiesession.service.LoginService;
 import com.example.newsfeed.exception.CustomException;
 import com.example.newsfeed.exception.ErrorCode;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class LoginController {
      * @return 로그인 성공 시 사용자 정보 반환 (ResponseEntity<LoginResponseDto>)
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
+    public ResponseEntity<LoginSuccessResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
 
         HttpSession existingSession = request.getSession(false);
         if (existingSession != null && existingSession.getAttribute(Const.LOGIN_USER) != null) {
@@ -61,10 +62,11 @@ public class LoginController {
         // 세션에 로그인 정보를 저장
         session.setAttribute(Const.LOGIN_USER, responseDto);
 
-        // 디버깅용 출력문 (나중에 제거해도 됨)
-        System.out.println("로그인 성공! 세션 저장: " + session.getAttribute(Const.LOGIN_USER));
+        // 응답용 DTO (id 제외)
+        LoginSuccessResponseDto successResponse = new LoginSuccessResponseDto(loginUser);
 
-        return ResponseEntity.ok(responseDto);
+
+        return ResponseEntity.ok(successResponse);
     }
 
     /**
