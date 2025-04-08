@@ -2,8 +2,11 @@ package com.example.newsfeed.cookiesession.controller;
 
 import com.example.newsfeed.cookiesession.dto.LoginRequestDto;
 import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
+import com.example.newsfeed.cookiesession.repository.LoginRepository;
+import com.example.newsfeed.cookiesession.service.LoginService;
 import com.example.newsfeed.exception.CustomException;
 import com.example.newsfeed.exception.ErrorCode;
+import com.example.newsfeed.user.entity.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,8 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class loginController {
+public class LoginController {
 
+    private final LoginService loginService;
 
     /**
      * 로그인 처리
@@ -35,12 +39,10 @@ public class loginController {
 
 
         // 로그인 시도
-        User loginUser = userService.login(
-                loginRequestDto.getUserEmail(),
-                loginRequestDto.getUserPassword()
+        User loginUser = loginService.login(
+                loginRequestDto.getEmail(),
+                loginRequestDto.getPassword()
         );
-
-
 
         // 로그인 실패 시 예외 발생
         if (loginUser == null) {
