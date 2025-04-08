@@ -6,8 +6,40 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
+    //authorized
+    UNAUTHORIZED("AU001", "로그인이 필요한 요청입니다.", HttpStatus.UNAUTHORIZED),
+
+    //user
     USER_NOT_FOUND("C001", "해당 유저는 존재하지 않습니다.", HttpStatus.NOT_FOUND),
-    INVALID_PASSWORD("C002", "비밀번호가 일치하지 않습니다.", HttpStatus.NOT_FOUND);
+    INVALID_PASSWORD("C002", "비밀번호가 일치하지 않습니다.", HttpStatus.NOT_FOUND),
+
+    //comment
+    COMMENT_NOT_FOUND("CM001", "해당 댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    COMMENT_CONTENT_EMPTY("CM002", "댓글 내용을 입력해주세요.", HttpStatus.BAD_REQUEST),
+    COMMENT_UPDATE_UNAUTHORIZED("CM003", "댓글 작성자만 수정할 수 있습니다.", HttpStatus.FORBIDDEN),
+    COMMENT_DELETE_UNAUTHORIZED("CM004", "댓글 또는 게시글 작성자만 삭제할 수 있습니다.", HttpStatus.FORBIDDEN),
+
+
+    //board
+    BOARD_NOT_FOUND("B001", "해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+
+    /**
+     * 예외 ??
+     * 1. 댓글 작성
+     * 게시물 없음 / 번호 잘못입력함
+     * 댓글 입력 안함
+     * <p>
+     * 2. 댓글 조회
+     * 전체조회 ;게시글 존재안함
+     * 단건 조회; 게시글 존재 안함 / 댓글 존재 안함
+     * 3. 수정
+     * 댓글 존재안함 / 댓글 입력안함 ( 공백도안됨)
+     * 댓글 작성자가 아닌 사람이 수정하려함
+     * <p>
+     * 4. 삭제
+     * 댓글 존재안함
+     * 댓글,게시글 작성자가 아닌 사람이 삭제하려함
+     */
 
 
     private final String code;
