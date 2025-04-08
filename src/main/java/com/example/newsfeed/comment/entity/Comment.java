@@ -1,5 +1,7 @@
 package com.example.newsfeed.comment.entity;
 
+import com.example.newsfeed.board.entity.Board;
+import com.example.newsfeed.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -28,7 +30,8 @@ public class Comment extends BaseEntity {
     public Comment() {
     }
 
-    public Comment(Board board, String contents) {
+    public Comment(User user, Board board, String contents) {
+        this.user = user;
         this.board = board;
         this.contents = contents;
     }
