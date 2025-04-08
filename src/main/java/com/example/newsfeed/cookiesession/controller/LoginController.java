@@ -1,5 +1,6 @@
 package com.example.newsfeed.cookiesession.controller;
 
+import com.example.newsfeed.common.Const;
 import com.example.newsfeed.cookiesession.dto.LoginRequestDto;
 import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
 import com.example.newsfeed.cookiesession.repository.LoginRepository;
@@ -34,6 +35,11 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
 
+        HttpSession existingSession = request.getSession(false);
+        if (existingSession != null && existingSession.getAttribute(Const.LOGIN_USER) != null) {
+            throw new CustomException(ErrorCode.ALREADY_LOGGED_IN);  // 이미 로그인된 상태
+        }
+
         // 세션 가져오기
         HttpSession session = request.getSession();
 
@@ -53,10 +59,10 @@ public class LoginController {
         LoginResponseDto responseDto = new LoginResponseDto(loginUser);
 
         // 세션에 로그인 정보를 저장
-        session.setAttribute("LOGIN_USER", responseDto);
+        session.setAttribute(Const.LOGIN_USER, responseDto);
 
         // 디버깅용 출력문 (나중에 제거해도 됨)
-        System.out.println("로그인 성공! 세션 저장: " + session.getAttribute("LOGIN_USER"));
+        System.out.println("로그인 성공! 세션 저장: " + session.getAttribute(Const.LOGIN_USER));
 
         return ResponseEntity.ok(responseDto);
     }
