@@ -5,11 +5,14 @@ import lombok.Getter;
 @Getter
 public class UpdatePasswordRequestDto {
 
+    private final Long id;
+
     private final String oldPassword;
 
     private final String newPassword;
 
-    public UpdatePasswordRequestDto(String oldPassword, String newPassword) {
+    public UpdatePasswordRequestDto(Long id, String oldPassword, String newPassword) {
+        this.id = id;
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
     }
