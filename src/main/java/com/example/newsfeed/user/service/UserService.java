@@ -26,6 +26,12 @@ public class UserService {
         return new SignUpResponseDto(saveUser.getId(), saveUser.getUsername(), saveUser.getEmail(), saveUser.getBirthday(), saveUser.getHobby());
     }
 
+    public UserResponseDto findById(Long id) {
+        User findUser = userRepository.findById(id).orElseThrow(() ->
+                new CustomException(ErrorCode.USER_NOT_FOUND));
+        return new UserResponseDto(findUser);
+    }
+
     @Transactional
     public UserResponseDto updateUser(Long id, String username, String email, String password, LocalDate birthday, String hobby, Long userId) {
         User findUser = userRepository.findById(id).orElseThrow(() ->
@@ -66,4 +72,5 @@ public class UserService {
         }
         userRepository.delete(findUser);
     }
+
 }
