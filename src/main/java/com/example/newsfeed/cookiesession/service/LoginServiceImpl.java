@@ -3,12 +3,13 @@ package com.example.newsfeed.cookiesession.service;
 import com.example.newsfeed.cookiesession.repository.LoginRepository;
 import com.example.newsfeed.exception.CustomException;
 import com.example.newsfeed.exception.ErrorCode;
+import com.example.newsfeed.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class LoginServiceImpl {
+public class LoginServiceImpl implements LoginService {
 
 
     private final LoginRepository loginRepository;
@@ -19,11 +20,11 @@ public class LoginServiceImpl {
     public User login(String email, String password) {
 
         // 이메일로 소비자 조회 (이메일이 없으면 예외 처리)
-        User user = userRepository.findByUserEmail(email)
+        User user = loginRepository.findUserByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 비밀번호가 일치하는지 확인
-        if (!user.getUserPassword().equals(password)) {
+        if (!user.getPassword().equals(password)) {
 
             // 비밀번호가 일치하지 않으면 예외 처리
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
