@@ -31,4 +31,14 @@ public class UserResponseDto {
         this.birthday = user.getBirthday();
         this.hobby = user.getHobby();
     }
+
+    public static SignUpResponseDto from(User user) {
+        return new SignUpResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getBirthday(),
+                user.getHobby()
+        );
+    }
 }
