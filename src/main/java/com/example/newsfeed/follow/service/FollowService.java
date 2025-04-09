@@ -8,11 +8,7 @@ import com.example.newsfeed.user.entity.User;
 import com.example.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,21 +17,48 @@ public class FollowService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
 
-    @Transactional
-    public FollowResponseDto follow(FollowRequestDto requestDto) {
+//    @Transactional
+//    public FollowResponseDto followUser(FollowRequestDto requestDto) {
+//
+//        Long followerId = requestDto.getFollowerId();
+//        Long followingId = requestDto.getFollowingId();
+//
+//        User findFollower = userRepository.findByIdOrElseThrow(followerId);
+//        User findFollowing = userRepository.findByIdOrElseThrow(followingId);
+//
+//       followRepository.findByFollowerAndFollowing(follower, following);
+//
+//
+//    }
 
-        User follower = userRepository.findByEmail(requestDto.getFollowerEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Does not exist email "));
-        User followed = userRepository.findByEmail(requestDto.getFollowedEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Does not exist email "));
 
-        Follow follow = new Follow(follower, followed);
 
-        followRepository.save(follow);
 
-        return new FollowResponseDto(follower.getEmail(), followed.getEmail());
-    }
 
+
+//         2
+//
+//  public FollowResponseDto follow(User email) {
+//
+//        User findEmail = userRepository.findUserByUserEmailOrElseThrow(email.getEmail());
+//
+//        Follow follow = new Follow(follower, following);
+//        follow.setUser(findEmail);
+//
+//        followRepository.save(follow);
+//
+//        return new FollowResponseDto(follow);
+
+
+
+//        1
+//        private final FollowRepository followRepository;
+//        private final UserRepository userRepository;
+//
+//        userRepository.findUserByUserId(userId);
+//
+//        Follow follow = new Follow(follower, following);
+//        follow.
+//
+//  }
 }
