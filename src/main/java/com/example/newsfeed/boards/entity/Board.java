@@ -1,12 +1,13 @@
 package com.example.newsfeed.boards.entity;
 
 //import com.example.newsfeed.users.entity.User;
+import com.example.newsfeed.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 @Getter
 @Entity
-@Table(name="board")
+@Table(name="boards")
 public class Board extends BaseEntity {
 
     @Id
@@ -16,9 +17,9 @@ public class Board extends BaseEntity {
     @Column(columnDefinition = "longtext")
     private String contents;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Board(String contents) {
         this.contents = contents;
