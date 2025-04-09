@@ -11,6 +11,7 @@ public class LoginResponseDto {
     private String email;  // 작성자 Email
 
     public LoginResponseDto(User user) {
+
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
