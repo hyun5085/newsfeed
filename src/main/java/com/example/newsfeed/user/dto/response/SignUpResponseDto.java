@@ -1,5 +1,6 @@
 package com.example.newsfeed.user.dto.response;
 
+import com.example.newsfeed.user.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -29,5 +30,15 @@ public class SignUpResponseDto {
         this.email = email;
         this.birthday = birthday;
         this.hobby = hobby;
+    }
+
+    public static SignUpResponseDto from(User user) {
+        return new SignUpResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getBirthday(),
+                user.getHobby()
+        );
     }
 }
