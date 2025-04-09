@@ -28,9 +28,9 @@ public class Board extends BaseEntity {
 
     }
 
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public void updateBoard(Long id, String contents) {
         this.id = id;
