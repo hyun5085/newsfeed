@@ -10,15 +10,15 @@ public class DetailBoardResponseDto {
     private final Long id;
     private final String contents;
     private final String username;
-    private final LocalDateTime created_at;
-    private final LocalDateTime updated_at;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
-    public DetailBoardResponseDto(Long id, String contents, String username, LocalDateTime created_at, LocalDateTime updated_at) {
+    public DetailBoardResponseDto(Long id, String contents, String username, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.contents = contents;
         this.username = username;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
 }

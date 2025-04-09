@@ -7,12 +7,12 @@ public class CreateBoardRequestDto {
 
     private final Long id;
     private final String contents;
-    private final String username;
+    private final Long userId;
 
-    public CreateBoardRequestDto(Long id, String contents, String username) {
+    public CreateBoardRequestDto(Long id, String contents, Long userId) {
         this.id = id;
         this.contents = contents;
-        this.username = username;
+        this.userId = userId;
     }
 
 }
