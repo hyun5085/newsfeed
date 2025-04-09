@@ -5,6 +5,7 @@ import com.example.newsfeed.comment.dto.request.CreateCommentRequestDto;
 import com.example.newsfeed.comment.dto.response.CommentResponseDto;
 import com.example.newsfeed.comment.dto.response.CreateCommentResponseDto;
 import com.example.newsfeed.comment.service.CommentService;
+import com.example.newsfeed.common.Const;
 import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
 import com.example.newsfeed.exception.CustomException;
 import com.example.newsfeed.exception.ErrorCode;
@@ -33,15 +34,13 @@ public class CommentController {
      */
     @PostMapping("/boards/{boardId}/comments")
     public ResponseEntity<CreateCommentResponseDto> createComment(
-            @SessionAttribute(name = "LOGIN_USER", required = false) LoginResponseDto loginUser,
+            @SessionAttribute(name = Const.LOGIN_USER) LoginResponseDto loginUser,
             @PathVariable Long boardId,
             @Valid @RequestBody CreateCommentRequestDto requestDto) {
 
-        if (loginUser == null || loginUser.getId() == null) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
         log.info("Comment 생성");
         Long userId = loginUser.getId();
+        log.info(String.valueOf(userId));
         CreateCommentResponseDto saveComment = commentService.save(userId, boardId, requestDto);
         return ResponseEntity.ok(saveComment);
     }
@@ -56,7 +55,7 @@ public class CommentController {
     public ResponseEntity<List<CommentResponseDto>> findCommentsByBoardId(
             @PathVariable Long boardId
     ) {
-
+        log.info("전체 조회");
         //  Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId);
         List<CommentResponseDto> commentList = commentService.findCommentsByBoardId(boardId);
         return ResponseEntity.ok(commentList);
@@ -84,6 +83,7 @@ public class CommentController {
             @PathVariable Long boardId,
             @PathVariable Long id
     ) {
+        log.info("단건 조회");
         CommentResponseDto findComment = commentService.findByBoardId(boardId, id);
         return ResponseEntity.ok(findComment);
     }
@@ -99,14 +99,13 @@ public class CommentController {
      */
     @PutMapping("/comments/{id}")
     public ResponseEntity<CommentResponseDto> updateComment(
-            @SessionAttribute(name = "LOGIN_USER", required = false) LoginResponseDto loginUser,
+            @SessionAttribute(name = Const.LOGIN_USER) LoginResponseDto loginUser,
             @PathVariable Long id,
             @Valid @RequestBody CommentUpdateRequestDto requestDto
     ) {
-        if (loginUser == null || loginUser.getId() == null) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
+        log.info("댓글 수정");
         Long userId = loginUser.getId();
+        log.info(String.valueOf(userId));
         CommentResponseDto updateComment = commentService.updateComments(id, userId, requestDto);
         return ResponseEntity.ok(updateComment);
     }
@@ -114,19 +113,19 @@ public class CommentController {
     /**
      * 댓글 삭제 api
      * 게시글 작성자, 댓글 작성자만 삭제 가능
-     *  완료, 게시글 작성자 기준 되는지 확인 필요
+     * 완료, 게시글 작성자 기준 되는지 확인 필요
+     *
      * @param id
      * @return
      */
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<String> deleteComment(
-            @SessionAttribute(name = "LOGIN_USER", required = false) LoginResponseDto loginUser,
+            @SessionAttribute(name = Const.LOGIN_USER) LoginResponseDto loginUser,
             @PathVariable Long id
     ) {
-        if (loginUser == null || loginUser.getId() == null) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
+        log.info("댓글 삭제");
         Long userId = loginUser.getId();
+        log.info(String.valueOf(userId));
         String msg = commentService.deleteComment(id, userId);
         return ResponseEntity.ok(msg);
     }
