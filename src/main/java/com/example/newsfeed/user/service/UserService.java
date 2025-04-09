@@ -7,7 +7,9 @@ import com.example.newsfeed.user.dto.request.UpdatePasswordRequestDto;
 import com.example.newsfeed.user.dto.request.UpdateUserRequestDto;
 import com.example.newsfeed.user.dto.response.SignUpResponseDto;
 import com.example.newsfeed.user.dto.response.UserResponseDto;
+import com.example.newsfeed.user.entity.RetiredEmail;
 import com.example.newsfeed.user.entity.User;
+import com.example.newsfeed.user.repository.RetiredEmailRepository;
 import com.example.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +22,20 @@ import java.time.LocalDate;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RetiredEmailRepository retiredEmailRepository;
 
     public SignUpResponseDto signUp(String username, String password, String email, LocalDate birthday, String hobby) {
+
+        // 🔒 이미 탈퇴한 이메일인지 확인
+        if (retiredEmailRepository.existsByEmail(email)) {
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_RETIRED);
+        }
+
+        // 🔒 기존 회원인지 확인
+        if (userRepository.existsByEmail(email)) {
+            throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
+        }
+
         User user = new User(username, password, email, birthday, hobby);
         User saveUser = userRepository.save(user);
         return new SignUpResponseDto(saveUser.getId(), saveUser.getUsername(), saveUser.getEmail(), saveUser.getBirthday(), saveUser.getHobby());
@@ -61,6 +75,11 @@ public class UserService {
         if (!findUser.getPassword().equals(requestDto.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
+
+        // ✅ 탈퇴 이메일 저장
+        RetiredEmail retiredEmail = new RetiredEmail(findUser.getEmail());
+        retiredEmailRepository.save(retiredEmail);
+
         userRepository.delete(findUser);
     }
 
