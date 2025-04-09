@@ -1,11 +1,17 @@
 package com.example.newsfeed.user.controller;
 
+import com.example.newsfeed.common.Const;
+import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
+import com.example.newsfeed.user.dto.request.DeleteUserRequestDto;
 import com.example.newsfeed.user.dto.request.SignUpRequestDto;
 import com.example.newsfeed.user.dto.request.UpdatePasswordRequestDto;
 import com.example.newsfeed.user.dto.request.UpdateUserRequestDto;
 import com.example.newsfeed.user.dto.response.SignUpResponseDto;
 import com.example.newsfeed.user.dto.response.UserResponseDto;
 import com.example.newsfeed.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,35 +25,51 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/users/signup")
-    public ResponseEntity<SignUpResponseDto> signUp(@RequestBody SignUpRequestDto requestDto) {
-        SignUpResponseDto responseDto = userService.signUp(requestDto.getUsername(), requestDto.getPassword(), requestDto.getEmail());
+    public ResponseEntity<SignUpResponseDto> signUp(@RequestBody @Valid SignUpRequestDto requestDto) {
+        SignUpResponseDto responseDto = userService.signUp(
+                requestDto.getUsername(), requestDto.getPassword(), requestDto.getEmail(), requestDto.getBirthday(), requestDto.getHobby());
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    @PutMapping("/users/{id}")
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserResponseDto> findById(@PathVariable Long id) {
+        UserResponseDto userResponseDto = userService.findById(id);
+        return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+    }
+//    살려주세요 살려주시라요 살려주시지요!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    @PutMapping("/users")
     public ResponseEntity<UserResponseDto> updateUser(
-            @PathVariable Long id,
-            @RequestBody UpdateUserRequestDto requestDto
+            @Valid @RequestBody UpdateUserRequestDto requestDto,
+            HttpServletRequest request
     ) {
-        userService.updateUser(id,requestDto.getUsername(), requestDto.getEmail(), requestDto.getPassword());
-        return new ResponseEntity<>(HttpStatus.OK);
+        HttpSession session = request.getSession();
+        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+        Long loginUserId = loginUser.getId();
+        UserResponseDto responseDto = userService.updateUser(requestDto, loginUserId);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @PatchMapping("/users/{id}")
+    @PatchMapping("/users")
     public ResponseEntity<UserResponseDto> updatePassword(
-            @PathVariable Long id,
-            @RequestBody UpdatePasswordRequestDto requestDto
+            @Valid @RequestBody UpdatePasswordRequestDto requestDto,
+            HttpServletRequest request
     ) {
-        userService.updatePassword(id, requestDto.getOldPassword(), requestDto.getNewPassword());
-        return new ResponseEntity<>(HttpStatus.OK);
+        HttpSession session = request.getSession();
+        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+        Long loginUserId = loginUser.getId();
+        UserResponseDto responseDto = userService.updatePassword(requestDto, loginUserId);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/users")
     public ResponseEntity<Void> delete(
-            @PathVariable Long id,
-            @RequestBody UpdateUserRequestDto requestDto
+            @Valid @RequestBody DeleteUserRequestDto requestDto,
+            HttpServletRequest request
     ) {
-        userService.delete(id, requestDto.getPassword());
+        HttpSession session = request.getSession();
+        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+        Long loginUserId = loginUser.getId();
+        userService.delete(requestDto, loginUserId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

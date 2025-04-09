@@ -1,8 +1,11 @@
 package com.example.newsfeed.user.entity;
 
 import com.example.newsfeed.user.security.PasswordConverter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -23,20 +26,31 @@ public class User extends BaseEntity {
     @Convert(converter = PasswordConverter.class)
     private String password;
 
+    @Column
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthday;
+
+    @Column
+    private String hobby;
+
     public User() {
 
     }
 
-    public User(String username, String password, String email) {
+    public User(String username, String password, String email, LocalDate birthday, String hobby) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.birthday = birthday;
+        this.hobby = hobby;
     }
 
-    public void updateUser(String username, String email, String password) {
+    public void updateUser(String username, String email, String password, LocalDate birthday, String hobby) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.birthday = birthday;
+        this.hobby = hobby;
     }
 
     public void updatePassword(String password) {
