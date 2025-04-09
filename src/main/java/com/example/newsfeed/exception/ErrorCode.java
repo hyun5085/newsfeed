@@ -5,14 +5,6 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
-
-    //authorized
-    UNAUTHORIZED("AU001", "로그인이 필요한 요청입니다.", HttpStatus.UNAUTHORIZED),
-
-    //user
-    USER_NOT_FOUND("C001", "해당 유저는 존재하지 않습니다.", HttpStatus.NOT_FOUND),
-    INVALID_PASSWORD("C002", "비밀번호가 일치하지 않습니다.", HttpStatus.NOT_FOUND),
-
     //comment
     COMMENT_NOT_FOUND("CM001", "해당 댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     COMMENT_CONTENT_EMPTY("CM002", "댓글 내용을 입력해주세요.", HttpStatus.BAD_REQUEST),
@@ -21,7 +13,16 @@ public enum ErrorCode {
 
 
     //board
-    BOARD_NOT_FOUND("B001", "해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+    BOARD_NOT_FOUND("B001", "해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+
+    //authorized
+    UNAUTHORIZED("AU001", "로그인이 필요한 요청입니다.", HttpStatus.UNAUTHORIZED),
+
+    //user
+    USER_NOT_FOUND("L001", "해당 유저는 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+    INVALID_PASSWORD("L002", "비밀번호가 일치하지 않습니다.", HttpStatus.NOT_FOUND),
+    ALREADY_LOGGED_IN("L003", "이미 로그인된 상태입니다.", HttpStatus.BAD_REQUEST);
+
 
     /**
      * 예외 ??
