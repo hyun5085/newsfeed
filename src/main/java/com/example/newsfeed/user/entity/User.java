@@ -1,6 +1,7 @@
 package com.example.newsfeed.user.entity;
 
 import com.example.newsfeed.user.security.PasswordConverter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -26,6 +27,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Column
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
     @Column
