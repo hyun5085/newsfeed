@@ -7,15 +7,11 @@ import lombok.Getter;
 @Getter
 public class FollowResponseDto {
 
-    private String message;
-    private Long followerId;
-    private Long followingId;
+    private String followerEmail;
+    private String followedEmail;
 
-        public FollowResponseDto(String message, Long followerId, Long followingId) {
-        this.message = message;
-        this.followerId = followerId;
-        this.followingId = followingId;
+    public FollowResponseDto(String followerEmail, String followedEmail) {
+        this.followerEmail = followerEmail;
+        this.followedEmail = followedEmail;
     }
-
-    }
-
+}
