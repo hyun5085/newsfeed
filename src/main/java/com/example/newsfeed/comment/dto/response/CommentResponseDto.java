@@ -1,5 +1,6 @@
 package com.example.newsfeed.comment.dto.response;
 
+import com.example.newsfeed.comment.entity.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
@@ -34,5 +35,19 @@ public class CommentResponseDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
 
+    }
+
+    // Comment 엔티티를 CommentResponseDto로 변환하는 정적 팩토리 메서드
+    // 검색, 수정, 삽입 메서드에서 사용
+    public static CommentResponseDto from(Comment comment){
+        return new CommentResponseDto(
+                comment.getId(),
+                comment.getBoard().getId(),
+                comment.getUser().getId(),
+                comment.getUser().getUsername(),
+                comment.getContents(),
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
+        );
     }
 }
