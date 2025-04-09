@@ -1,6 +1,6 @@
 package com.example.newsfeed.comment.entity;
 
-import com.example.newsfeed.board.entity.Board;
+import com.example.newsfeed.boards.entity.Board;
 import com.example.newsfeed.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;

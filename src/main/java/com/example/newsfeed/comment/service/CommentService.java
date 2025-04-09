@@ -4,9 +4,9 @@ import com.example.newsfeed.comment.dto.request.CommentUpdateRequestDto;
 import com.example.newsfeed.comment.dto.request.CreateCommentRequestDto;
 import com.example.newsfeed.comment.dto.response.CommentResponseDto;
 import com.example.newsfeed.comment.dto.response.CreateCommentResponseDto;
-import com.example.newsfeed.board.entity.Board;
+import com.example.newsfeed.boards.entity.Board;
 import com.example.newsfeed.comment.entity.Comment;
-import com.example.newsfeed.board.repository.BoardRepository;
+import com.example.newsfeed.boards.repository.BoardRepository;
 import com.example.newsfeed.comment.repository.CommentRepository;
 import com.example.newsfeed.exception.CustomException;
 import com.example.newsfeed.exception.ErrorCode;
@@ -157,6 +157,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
+
         if (!comment.getUser().getId().equals(userId) || !comment.getBoard().getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.COMMENT_DELETE_UNAUTHORIZED);
         }
