@@ -6,12 +6,11 @@ import lombok.Getter;
 @Getter
 public class FollowRequestDto {
 
-    private Long followerId;
-    private Long followingId;
+    private String followerEmail;
+    private String followedEmail;
 
-        public FollowRequestDto(Long followerId, Long followingId) {
-        this.followerId = followerId;
-        this.followingId = followingId;
+    public FollowRequestDto(String followerEmail, String followedEmail) {
+        this.followerEmail = followerEmail;
+        this.followedEmail = followedEmail;
     }
-
 }
