@@ -17,19 +17,19 @@ public class FollowService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
 
-    @Transactional
-    public FollowResponseDto followUser(FollowRequestDto requestDto) {
-
-        Long followerId = requestDto.getFollowerId();
-        Long followingId = requestDto.getFollowingId();
-
-        User findFollower = userRepository.findByIdOrElseThrow(followerId);
-        User findFollowing = userRepository.findByIdOrElseThrow(followingId);
-
-        followRepository.findByFollowerAndFollowing(follower, following);
-
-
-    }
+//    @Transactional
+//    public FollowResponseDto followUser(FollowRequestDto requestDto) {
+//
+//        Long followerId = requestDto.getFollowerId();
+//        Long followingId = requestDto.getFollowingId();
+//
+//        User findFollower = userRepository.findByIdOrElseThrow(followerId);
+//        User findFollowing = userRepository.findByIdOrElseThrow(followingId);
+//
+//       followRepository.findByFollowerAndFollowing(follower, following);
+//
+//
+//    }
 
 
 

@@ -18,25 +18,13 @@ public class FollowController {
 
     private final FollowService followService;
 
-    @PostMapping("/follow")
-    public ResponseEntity<FollowResponseDto> followUser(@RequestBody FollowRequestDto requestDto) {
-
-        FollowResponseDto followResponseDto = followService.followUser(requestDto);
-
-        return new ResponseEntity<>(followResponseDto, HttpStatus.OK);
-    }
-
-
-
-
-
-//
 //    @PostMapping("/follow")
-//    public ResponseEntity<FollowResponseDto> follow(@RequestBody FollowRequestDto requestDto) {
+//    public ResponseEntity<FollowResponseDto> followUser(@RequestBody FollowRequestDto requestDto) {
 //
-//        FollowResponseDto followResponseDto = followService.follow(requestDto.getEmail());
+//        FollowResponseDto followResponseDto = followService.followUser(requestDto);
 //
 //        return new ResponseEntity<>(followResponseDto, HttpStatus.OK);
 //    }
+
 
 }
