@@ -14,8 +14,8 @@ import com.example.newsfeed.user.entity.User;
 import com.example.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,14 +51,8 @@ public class CommentService {
         Comment comment = new Comment(user, board, requestDto.getContents());
         commentRepository.save(comment);
 
-        return new CreateCommentResponseDto(
-                comment.getId(),
-                board.getId(),
-                user.getId(),
-                user.getUsername(),
-                comment.getContents(),
-                comment.getCreatedAt()
-        );
+        //comment 엔티티를 dto 내부에서 CreateCommentResponseDto로 변환
+        return CreateCommentResponseDto.from(comment);
     }
 
     /**
@@ -73,21 +67,14 @@ public class CommentService {
         Board board = boardRepository.findById(boardId).orElseThrow(
                 () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
         );
+
         List<Comment> commentList = commentRepository.findByBoardIdOrderByUpdatedAtDesc(board.getId());
+
         if (commentList.isEmpty()) {
             throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
         }
-
-        return commentList.stream().map(comment ->
-                new CommentResponseDto(
-                        comment.getId(),
-                        comment.getBoard().getId(),
-                        comment.getUser().getId(),
-                        comment.getUser().getUsername(),
-                        comment.getContents(),
-                        comment.getCreatedAt(),
-                        comment.getUpdatedAt()
-                )).toList();
+        // dto 내부에서 CommentResponseDto 변환
+        return commentList.stream().map(CommentResponseDto::from).toList();
 
     }
 
@@ -100,19 +87,22 @@ public class CommentService {
      */
     @Transactional(readOnly = true)
     public CommentResponseDto findByBoardId(Long boardId, Long id) {
+        // 입력한 게시글이 없을 경우
         Board board = boardRepository.findById(boardId).orElseThrow(
                 () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
         );
-        Comment comment = commentRepository.findByBoardId(board.getId());
-        return new CommentResponseDto(
-                comment.getId(),
-                comment.getBoard().getId(),
-                comment.getUser().getId(),
-                comment.getUser().getUsername(),
-                comment.getContents(),
-                comment.getCreatedAt(),
-                comment.getUpdatedAt()
+
+        // 댓글이 없을 경우
+        Comment comment = commentRepository.findById(id).orElseThrow(
+                () -> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
+        // commentRepository.findByIdAndBoard_Id(id,boardId)
+        // 해당게시글에 댓글이 없을 경우
+        if (!comment.getBoard().getId().equals(board.getId())) {
+            throw new CustomException(ErrorCode.COMMENT_NOT_BELONG_TO_BOARD);
+        }
+        // comment 엔티티를 dto 내부에서 CommentResponseDto 변환
+        return CommentResponseDto.from(comment);
     }
 
     /**
@@ -125,24 +115,18 @@ public class CommentService {
      */
     @Transactional
     public CommentResponseDto updateComments(Long id, Long userId, CommentUpdateRequestDto requestDto) {
-
-
+        // 댓글이 존재하지 않을 경우
         Comment findComment = commentRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
+        // 댓글의 작성자와 요청받은 식별자 값이 일치하지 않을 경우
         if (!findComment.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.COMMENT_UPDATE_UNAUTHORIZED);
         }
+
         findComment.update(requestDto.getContents());
-        return new CommentResponseDto(
-                findComment.getId(),
-                findComment.getBoard().getId(),
-                findComment.getUser().getId(),
-                findComment.getUser().getUsername(),
-                findComment.getContents(),
-                findComment.getCreatedAt(),
-                findComment.getUpdatedAt()
-        );
+        // comment 엔티티를 dto 내부에서 CommentResponseDto 변환
+        return CommentResponseDto.from(findComment);
     }
 
     /**
@@ -153,34 +137,29 @@ public class CommentService {
      * @return
      */
     @Transactional
-    public String deleteComment(Long id, Long userId) {
+    public void deleteComment(Long id, Long userId) {
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
         );
 
-        if (!comment.getUser().getId().equals(userId) || !comment.getBoard().getUser().getId().equals(userId)) {
+        if (!comment.getUser().getId().equals(userId) && !comment.getBoard().getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.COMMENT_DELETE_UNAUTHORIZED);
         }
         commentRepository.delete(comment);
-        return "삭제되었습니다";
     }
 
-//    public Page<CommentResponseDto> findCommentsPaged(Long boardId, int page, int size) {
-//        Board board = boardRepository.findById(boardId).orElseThrow(
-//                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
-//        Page<Comment> page = commentRepository.findAllByBoard_Id(board.getId(), pageable);
-//
-//        Page<CommentResponseDto> dtoPage = page.map(c -> new CommentResponseDto(
-//                c.getId(),
-//                c.getBoard().getId(),
-//                c.getUser().getId(),
-//                c.getUser().getUsername(),
-//                c.getContents(),
-//                c.getCreatedAt(),
-//                c.getUpdatedAt()
-//        ));
-//        return dtoPage;
-//    }
+    // 댓글 조회 페이지네이션, boardId에 해당하는 댓글들을 10개씩 조회
+    @Transactional(readOnly = true)
+    public Page<CommentResponseDto> findCommentsPaged(Long boardId, int page) {
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        // 수정일 기준 최신날짜를 기준으로 내림차순
+        // page : 페이지 번호, size : resource 수, 댓글 10개
+        Pageable pageable = PageRequest.of(page,10, Sort.by(Sort.Direction.DESC, "updatedAt"));
+        Page<Comment> commentPage = commentRepository.findAllByBoard_Id(board.getId(), pageable);
+
+       // Page<CommentResponseDto> dtoPage = commentPage.map(CommentResponseDto::from);
+        return commentPage.map(CommentResponseDto::from);
+    }
 }
 
