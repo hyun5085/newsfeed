@@ -11,7 +11,7 @@ public class FollowResponseDto {
     private String followerEmail;
     private String followedEmail;
 
-    public FollowResponseDto(String message, String followerEmail, String followedEmail) {
+    public FollowResponseDto( String followerEmail, String followedEmail, String message) {
         this.message = message;
         this.followerEmail = followerEmail;
         this.followedEmail = followedEmail;

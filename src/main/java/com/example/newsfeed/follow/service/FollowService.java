@@ -2,6 +2,7 @@ package com.example.newsfeed.follow.service;
 
 import com.example.newsfeed.follow.dto.FollowRequestDto;
 import com.example.newsfeed.follow.dto.FollowResponseDto;
+import com.example.newsfeed.follow.dto.UnfollowResponseDto;
 import com.example.newsfeed.follow.entitiy.Follow;
 import com.example.newsfeed.follow.repository.FollowRepository;
 import com.example.newsfeed.user.entity.User;
@@ -35,11 +36,12 @@ public class FollowService {
 
         followRepository.save(follow);
 
-        return new FollowResponseDto("팔로우 되었습니다.",follower.getEmail(), followed.getEmail());
+        return new FollowResponseDto(follower.getEmail(), followed.getEmail(), "팔로우 되었습니다.");
     }
 
+
     @Transactional
-    public FollowResponseDto unfollow(FollowRequestDto requestDto) {
+    public UnfollowResponseDto unfollow(FollowRequestDto requestDto) {
 
         User follower = userRepository.findByEmail(requestDto.getFollowerEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -52,7 +54,7 @@ public class FollowService {
 
         followRepository.delete(follow);
 
-        return new FollowResponseDto("언팔로우 되었습니다.");
+        return new UnfollowResponseDto("언팔로우 되었습니다.");
     }
 
 }
