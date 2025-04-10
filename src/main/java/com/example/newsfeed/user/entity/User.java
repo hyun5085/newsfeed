@@ -31,11 +31,9 @@ public class User extends BaseEntity {
     @Convert(converter = PasswordConverter.class)
     private String password;
 
-    @Column
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
-    @Column
     private String hobby;
 
     public User() {
