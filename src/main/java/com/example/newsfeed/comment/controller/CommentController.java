@@ -24,7 +24,7 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     /**
      * 댓글 생성*
