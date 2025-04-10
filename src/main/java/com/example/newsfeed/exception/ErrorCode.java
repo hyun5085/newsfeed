@@ -13,7 +13,7 @@ public enum ErrorCode {
     COMMENT_NOT_BELONG_TO_BOARD("CM005", "댓글이 해당 게시글에 속하지 않습니다.", HttpStatus.BAD_REQUEST),
 
     //board
-    BOARD_NOT_FOUND("B001", "해당 게시글이 존재하지 않습니다. !", HttpStatus.NOT_FOUND),
+    BOARD_NOT_FOUND("B001", "해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     BOARD_CREATE_UNAUTHORIZED("B002", "해당 로그인된 사용자만 게시글을 생성할 수 있습니다.", HttpStatus.UNAUTHORIZED),
     BOARD_UPDATE_UNAUTHORIZED("B003", "해당 게시글의 작성자만 수정할 수 있습니다.", HttpStatus.UNAUTHORIZED),
     BOARD_DELETE_UNAUTHORIZED("B004", "해당 게시글의 작성자만 삭제할 수 있습니다.", HttpStatus.UNAUTHORIZED),
