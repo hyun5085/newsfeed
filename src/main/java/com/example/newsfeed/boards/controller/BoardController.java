@@ -8,6 +8,7 @@ import com.example.newsfeed.boards.entity.Board;
 import com.example.newsfeed.boards.service.BoardService;
 import com.example.newsfeed.common.Const;
 import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
+import com.example.newsfeed.cookiesession.util.JwtUtil;
 import com.example.newsfeed.exception.CustomException;
 import com.example.newsfeed.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,21 +30,35 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/boards")
-    public ResponseEntity<BoardResponseDto> createBoard(@RequestBody CreateBoardRequestDto createBoardRequestDto, HttpSession session) {
+    public ResponseEntity<BoardResponseDto> createBoard(@RequestBody CreateBoardRequestDto createBoardRequestDto,
+                                                        @RequestHeader("Authorization") String authorizationHeader
+//                                                        HttpSession session
+    ) {
 
-        LoginResponseDto loginResponseDto = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+        // Authorization 헤더에서 JWT 토큰을 추출 (Bearer 방식)
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
 
-        if(loginResponseDto == null) {
+        // 토큰 검증
+        if (!jwtUtil.validateToken(token)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
-        if(loginResponseDto.getId().equals(createBoardRequestDto.getUserId())) {
-            throw new CustomException(ErrorCode.BOARD_CREATE_UNAUTHORIZED);
-        }
 
-        BoardResponseDto boardResponseDto = boardService.create(createBoardRequestDto.getContents(), loginResponseDto.getId());
+//        LoginResponseDto loginResponseDto = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+
+//        if(loginResponseDto == null) {
+//            throw new CustomException(ErrorCode.UNAUTHORIZED);
+//        }
+//
+//        if(loginResponseDto.getId().equals(createBoardRequestDto.getUserId())) {
+//            throw new CustomException(ErrorCode.BOARD_CREATE_UNAUTHORIZED);
+//        }
+        Long userId = jwtUtil.extractUserId(token); // JWT에서 사용자 ID 추출
+
+        BoardResponseDto boardResponseDto = boardService.create(createBoardRequestDto.getContents(), userId);
 
         return new ResponseEntity<>(boardResponseDto, HttpStatus.CREATED);
     }
@@ -61,6 +76,14 @@ public class BoardController {
         return new ResponseEntity<>(boardResponseDto, HttpStatus.OK);
     }
 
+//    @GetMapping("/boards/pagination")
+//    public ResponseEntity<List<BoardResponseDto>> findTopAll(@RequestParam int page, @RequestParam int size) {
+//
+//        List<BoardResponseDto> boardResponseDto = boardService.findTopAll(page, size);
+//
+//        return new ResponseEntity<>(boardResponseDto, HttpStatus.OK);
+//    }
+
 
 
     @GetMapping("/boards/{id}")
@@ -72,30 +95,53 @@ public class BoardController {
 
 
     @PatchMapping("/boards/{id}")
-    public ResponseEntity<Void> updateBoard(@PathVariable Long id, @RequestBody UpdateBoardRequestDto updateBoardRequestDto, HttpSession session) {
+    public ResponseEntity<Void> updateBoard(@PathVariable Long id, @RequestBody UpdateBoardRequestDto updateBoardRequestDto,
+                                            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        // Authorization 헤더에서 JWT 토큰을 추출 (Bearer 방식)
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
 
-        LoginResponseDto loginResponseDto = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
-
-        if(loginResponseDto == null) {
+        // 토큰 검증
+        if (!jwtUtil.validateToken(token)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
-        boardService.updateBoard(id, updateBoardRequestDto.getContents(), loginResponseDto.getId());
+        Long userId = jwtUtil.extractUserId(token); // JWT에서 사용자 ID 추출
+
+
+//        LoginResponseDto loginResponseDto = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+
+//        if(loginResponseDto == null) {
+//            throw new CustomException(ErrorCode.UNAUTHORIZED);
+//        }
+
+        boardService.updateBoard(id, updateBoardRequestDto.getContents(), userId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @DeleteMapping("/boards/{id}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long id, HttpSession session) {
+    public ResponseEntity<Void> deleteBoard(@PathVariable Long id,
+                                            @RequestHeader("Authorization") String authorizationHeader) {
 
-        LoginResponseDto loginResponseDto = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+        // Authorization 헤더에서 JWT 토큰을 추출 (Bearer 방식)
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
 
-        if(loginResponseDto == null) {
+        // 토큰 검증
+        if (!jwtUtil.validateToken(token)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
+
         }
 
-        boardService.deleteBoard(id, loginResponseDto.getId());
+        Long userId = jwtUtil.extractUserId(token); // JWT에서 사용자 ID 추출
+//        LoginResponseDto loginResponseDto = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
+
+//        if(loginResponseDto == null) {
+//            throw new CustomException(ErrorCode.UNAUTHORIZED);
+//        }
+
+        boardService.deleteBoard(id, userId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
