@@ -12,6 +12,7 @@ import com.example.newsfeed.user.entity.User;
 import com.example.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,13 @@ public class BoardService {
     public List<BoardResponseDto> findAll() {
         return boardRepository.findAll().stream().map(BoardResponseDto::toDto).toList();
     }
+
+//    public List<BoardResponseDto> findTopAll(int page, int size) {
+//
+//        Pageable pageable = PageRequest.of(page, size);
+//
+//        List<Board> boards = boardRepository.findAllByOrderByUpdatedAtDesc(pageable);
+//    }
 
     public DetailBoardResponseDto findById(Long id) {
         Board findBoard = boardRepository.findByIdOrElseThrow(id);
