@@ -27,7 +27,7 @@ public class BoardService {
 
     public BoardResponseDto create(String contents, Long userId) {
 
-        User findUser = userRepository.findByIdOrElseThrow(userId);
+        User findUser = userRepository.findById(userId).orElseThrow();
 
         Board board = new Board(contents);
         board.setUser(findUser);

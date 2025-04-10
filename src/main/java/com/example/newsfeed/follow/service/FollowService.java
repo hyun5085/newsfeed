@@ -35,7 +35,24 @@ public class FollowService {
 
         followRepository.save(follow);
 
-        return new FollowResponseDto(follower.getEmail(), followed.getEmail());
+        return new FollowResponseDto("팔로우 되었습니다.",follower.getEmail(), followed.getEmail());
+    }
+
+    @Transactional
+    public FollowResponseDto unfollow(FollowRequestDto requestDto) {
+
+        User follower = userRepository.findByEmail(requestDto.getFollowerEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Does not exist email "));
+        User followed = userRepository.findByEmail(requestDto.getFollowedEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Does not exist email "));
+
+        Follow follow = new Follow(follower, followed);
+
+        followRepository.delete(follow);
+
+        return new FollowResponseDto("언팔로우 되었습니다.");
     }
 
 }

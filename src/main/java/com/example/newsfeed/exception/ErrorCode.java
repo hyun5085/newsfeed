@@ -30,6 +30,10 @@ public enum ErrorCode {
     EMAIL_ALREADY_RETIRED("U001", "해당 이메일은 재사용할 수 없습니다.", HttpStatus.BAD_REQUEST),
     EMAIL_DUPLICATED("U001", "이미 사용자가 있습니다.", HttpStatus.BAD_REQUEST);
 
+    //follow
+//    FOLLOW_CONTENT_EMPTY("F001", "이메일을 입력해주세요.", HttpStatus.BAD_REQUEST),
+//    FOLLOW_NOT_FOUND("F002", "해당 이메일을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+//    FOLLOW_LOGIN_USER("F003", "본인의 이메일입니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;
