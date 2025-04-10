@@ -2,6 +2,7 @@ package com.example.newsfeed.user.controller;
 
 import com.example.newsfeed.common.Const;
 import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
+import com.example.newsfeed.cookiesession.util.JwtUtil;
 import com.example.newsfeed.user.dto.request.DeleteUserRequestDto;
 import com.example.newsfeed.user.dto.request.SignUpRequestDto;
 import com.example.newsfeed.user.dto.request.UpdatePasswordRequestDto;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
     public ResponseEntity<SignUpResponseDto> signUp(@RequestBody @Valid SignUpRequestDto requestDto) {
@@ -38,41 +40,34 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> updateUser(
+            @RequestHeader("Authorization") String token,
             @PathVariable Long id,
-            @Valid @RequestBody UpdateUserRequestDto requestDto,
-            HttpServletRequest request
+            @Valid @RequestBody UpdateUserRequestDto requestDto
     ) {
-        HttpSession session = request.getSession();
-        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
-        Long loginUserId = loginUser.getId();
+        Long loginUserId = jwtUtil.extractUserId(token); // JwtUtil에서 userId 추출
         UserResponseDto responseDto = userService.updateUser(id, requestDto, loginUserId);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponseDto> updatePassword(
+            @RequestHeader("Authorization") String token,
             @PathVariable Long id,
-            @Valid @RequestBody UpdatePasswordRequestDto requestDto,
-            HttpServletRequest request
+            @Valid @RequestBody UpdatePasswordRequestDto requestDto
     ) {
-        HttpSession session = request.getSession();
-        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
-        Long loginUserId = loginUser.getId();
+        Long loginUserId = jwtUtil.extractUserId(token);
         UserResponseDto responseDto = userService.updatePassword(id, requestDto, loginUserId);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
+            @RequestHeader("Authorization") String token,
             @PathVariable Long id,
-            @Valid @RequestBody DeleteUserRequestDto requestDto,
-            HttpServletRequest request
+            @Valid @RequestBody DeleteUserRequestDto requestDto
     ) {
-        HttpSession session = request.getSession();
-        LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute(Const.LOGIN_USER);
-        Long loginUserId = loginUser.getId();
+        Long loginUserId = jwtUtil.extractUserId(token);
         userService.delete(id, requestDto, loginUserId);
-        session.invalidate();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
