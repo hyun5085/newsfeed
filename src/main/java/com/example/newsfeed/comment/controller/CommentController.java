@@ -7,11 +7,10 @@ import com.example.newsfeed.comment.dto.response.CreateCommentResponseDto;
 import com.example.newsfeed.comment.service.CommentService;
 import com.example.newsfeed.common.Const;
 import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
-import com.example.newsfeed.exception.CustomException;
-import com.example.newsfeed.exception.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,6 @@ public class CommentController {
 
     /**
      * 댓글 생성*
-     * 완료
      *
      * @param requestDto
      * @parameter boardId
@@ -60,17 +58,16 @@ public class CommentController {
         List<CommentResponseDto> commentList = commentService.findCommentsByBoardId(boardId);
         return ResponseEntity.ok(commentList);
     }
-//
-//    @GetMapping("/boards/{boardId}/comments/page")
-//    public ResponseEntity<Page<CommentResponseDto>> findCommentsByBoardId(
-//            @PathVariable Long boardId,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size
-//    ) {
-//
-//        Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId,page,size);
-//        return ResponseEntity.ok(commentPage);
-//    }
+    // TODO: 페이지네이션
+
+    @GetMapping("/boards/{boardId}/comments/pages")
+    public ResponseEntity<Page<CommentResponseDto>> findCommentsByBoardId(
+            @PathVariable Long boardId,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId, page);
+        return ResponseEntity.ok(commentPage);
+    }
 
     /**
      * 댓글 단건 조회
@@ -91,7 +88,6 @@ public class CommentController {
     /**
      * 댓글 수정 api
      * 작성자만 수정 가능
-     * 완료
      *
      * @param id
      * @param requestDto
@@ -119,14 +115,14 @@ public class CommentController {
      * @return
      */
     @DeleteMapping("/comments/{id}")
-    public ResponseEntity<String> deleteComment(
+    public ResponseEntity<Void> deleteComment(
             @SessionAttribute(name = Const.LOGIN_USER) LoginResponseDto loginUser,
             @PathVariable Long id
     ) {
         log.info("댓글 삭제");
         Long userId = loginUser.getId();
+        commentService.deleteComment(id, userId);
         log.info(String.valueOf(userId));
-        String msg = commentService.deleteComment(id, userId);
-        return ResponseEntity.ok(msg);
+        return ResponseEntity.ok().build();
     }
 }

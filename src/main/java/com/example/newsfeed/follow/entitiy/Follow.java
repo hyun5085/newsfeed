@@ -14,19 +14,18 @@ public class Follow {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "follower_email")
+    @JoinColumn(name = "follower_id")
     private User follower;
 
     @ManyToOne
-    @JoinColumn(name = "following_email")
-    private User followed;
+    @JoinColumn(name = "following_id")
+    private User following;
 
     public Follow() {
     }
 
-    public Follow(User follower, User followed) {
+    public Follow(User follower, User following) {
         this.follower = follower;
-        this.followed = followed;
+        this.following = following;
     }
-
 }
