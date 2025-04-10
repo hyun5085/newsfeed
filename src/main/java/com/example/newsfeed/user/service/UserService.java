@@ -42,32 +42,34 @@ public class UserService {
     }
 
     public UserResponseDto findById(Long id) {
-        User findUser = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User findUser = findUserById(id);
         return new UserResponseDto(findUser);
     }
 
     @Transactional
     public UserResponseDto updateUser(Long id, UpdateUserRequestDto requestDto, Long loginUserId) {
-        User findUser = userRepository.findById(loginUserId).orElseThrow(() ->
-                new CustomException(ErrorCode.USER_NOT_FOUND));
+        User findUser = findUserById(loginUserId);
         findUser.updateUser(id, requestDto);
         return new UserResponseDto(findUser);
     }
 
     @Transactional
     public UserResponseDto updatePassword(Long id, UpdatePasswordRequestDto requestDto, Long loginUserId) {
-        User findUser = userRepository.findById(loginUserId).orElseThrow(() ->
-                new CustomException(ErrorCode.USER_NOT_FOUND));
+        User findUser = findUserById(loginUserId);
         findUser.updatePassword(id, requestDto);
         return new UserResponseDto(findUser);
     }
 
     public void delete(Long id, DeleteUserRequestDto requestDto, Long loginUserId) {
-        User findUser = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User findUser = findUserById(loginUserId);
         // ✅ 탈퇴 이메일 저장
         RetiredEmail retiredEmail = new RetiredEmail(findUser.getEmail());
         retiredEmailRepository.save(retiredEmail);
         findUser.validatePassword(id, requestDto.getPassword());
         userRepository.delete(findUser);
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 }
