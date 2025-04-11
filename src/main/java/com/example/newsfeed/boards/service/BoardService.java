@@ -29,7 +29,7 @@ public class BoardService {
 
     public DetailBoardResponseDto create(String contents, Long userId) {
 
-        User findUser = userRepository.findById(userId).orElseThrow();
+        User findUser = userRepository.findByIdOrElseThrow(userId);
 
         Board board = new Board(contents);
         board.setUser(findUser);
@@ -72,7 +72,7 @@ public class BoardService {
 
         findBoard.updateBoard(id, contents);
 
-        return new DetailBoardResponseDto(id, contents, findBoard.getUser().getId(), findBoard.getUser().getUsername(), findBoard.getCreatedAt(), findBoard.getUpdatedAt());
+        return new DetailBoardResponseDto(id, contents, findUser.getId(), findBoard.getUser().getUsername(), findBoard.getCreatedAt(), findBoard.getUpdatedAt());
     }
 
     public void deleteBoard(Long id, Long userId) {
