@@ -36,4 +36,7 @@ public class Follow {
         this.followed = followed;
     }
 
+    public Follow(User followed) {
+        this.followed = followed;
+    }
 }

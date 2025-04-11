@@ -33,8 +33,8 @@ public enum ErrorCode {
     //follow
     FOLLOW_LOGIN_USER("F001", "본인의 이메일입니다.", HttpStatus.BAD_REQUEST),
     FOLLOW_NOT_FOUND("F002", "이메일이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
-    FOLLOW_ALREADY_FOLLOW("F003", "이미 팔로우중 입니다.", HttpStatus.ALREADY_REPORTED),
-    FOLLOW_NONE_FOLLOW("F004", "팔로우 관계가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+    FOLLOW_ALREADY_FOLLOW("F003", "이미 팔로우중 입니다.", HttpStatus.ALREADY_REPORTED);
+//    FOLLOW_NONE_FOLLOW("F004", "팔로우 관계가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
 
     private final String code;
     private final String message;

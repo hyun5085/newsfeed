@@ -12,13 +12,6 @@ public class FollowResponseDto {
     private String followerEmail;
     private String followedEmail;
 
-//    public FollowResponseDto( String followerEmail, String followedEmail, String message) {
-//        this.message = message;
-//        this.followerEmail = followerEmail;
-//        this.followedEmail = followedEmail;
-//    }
-
-
     public FollowResponseDto(Long id, String followerEmail, String followedEmail, String message) {
         this.id = id;
         this.message = message;
@@ -26,7 +19,4 @@ public class FollowResponseDto {
         this.followedEmail = followedEmail;
     }
 
-    public FollowResponseDto(String message) {
-        this.message = message;
-    }
 }

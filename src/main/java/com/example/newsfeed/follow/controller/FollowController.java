@@ -6,10 +6,7 @@ import com.example.newsfeed.exception.ErrorCode;
 import com.example.newsfeed.follow.dto.FollowRequestDto;
 import com.example.newsfeed.follow.dto.FollowResponseDto;
 import com.example.newsfeed.follow.dto.UnfollowResponseDto;
-import com.example.newsfeed.follow.entitiy.Follow;
 import com.example.newsfeed.follow.service.FollowService;
-import com.example.newsfeed.user.dto.request.UpdatePasswordRequestDto;
-import com.example.newsfeed.user.dto.response.UserResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,15 +41,21 @@ public class FollowController {
         return new ResponseEntity<>(followResponseDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/unfollow/{id}")
+    @DeleteMapping("/unfollow")
     public ResponseEntity<UnfollowResponseDto> unfollow(
-//            @RequestHeader("Authorization") String token,
-            @PathVariable Long id
+            @RequestHeader("Authorization") String authorizationHeader,
+            @Valid @RequestBody FollowRequestDto requestDto
             ) {
-//        Long loginUserId = jwtUtil.extractUserId(token);
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
 
-//        FollowRequestDto followRequestDto = new FollowRequestDto(id);
-        UnfollowResponseDto unfollowResponseDto = followService.unfollow(id);
+        // 토큰 검증
+        if (!jwtUtil.validateToken(token)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        Long userId = jwtUtil.extractUserId(token);
+
+        UnfollowResponseDto unfollowResponseDto = followService.unfollow(userId, requestDto);
 
         return new ResponseEntity<>(unfollowResponseDto, HttpStatus.OK);
     }

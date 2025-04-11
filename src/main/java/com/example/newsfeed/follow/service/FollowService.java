@@ -27,13 +27,15 @@ public class FollowService {
     @Transactional
     public FollowResponseDto follow(Long userId, FollowRequestDto requestDto) {
 
-        User findUser = userRepository.findById(userId).orElseThrow();
-
-        User follower = userRepository.findById(requestDto.getFollowerId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "follower not found"));
+        User follower = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         User followed = userRepository.findById(requestDto.getFollowedId())
                 .orElseThrow(() -> new CustomException(ErrorCode.FOLLOW_NOT_FOUND));
+
+        if (follower.getId().equals(followed.getId())) {
+            throw new CustomException(ErrorCode.FOLLOW_LOGIN_USER);
+        }
 
         if (followRepository.findByFollowerAndFollowed(follower, followed).isPresent()) {
             throw new CustomException(ErrorCode.FOLLOW_ALREADY_FOLLOW);
@@ -47,24 +49,13 @@ public class FollowService {
     }
 
     @Transactional
-    public UnfollowResponseDto unfollow(Long id) {
+    public UnfollowResponseDto unfollow(Long userId, FollowRequestDto requestDto) {
 
-        Follow findById = followRepository.findById(id).orElseThrow();
-
-//        User follower = userRepository.findByEmail(requestDto.getFollowerEmail())
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "follower not found"));
-//
-//        User followed = userRepository.findByEmail(requestDto.getFollowedEmail())
-//                .orElseThrow(() -> new CustomException(ErrorCode.FOLLOW_NOT_FOUND));
-
-//        Follow follow = followRepository.findByFollowerAndFollowed(follower, followed)
-//                .orElseThrow(() -> new CustomException(ErrorCode.FOLLOW_NONE_FOLLOW));
+        Follow findById = followRepository.findById(userId).orElseThrow();
 
         followRepository.delete(findById);
 
         return new UnfollowResponseDto("언팔로우 되었습니다.");
     }
-
-
 
 }

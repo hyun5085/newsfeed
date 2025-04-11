@@ -10,6 +10,5 @@ import java.util.Optional;
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     Optional<Follow> findByFollowerAndFollowed(User follower, User followed);
-    void deleteByFollowerAndFollowed(User follower, User followed);
 
 }
