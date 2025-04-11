@@ -7,6 +7,9 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
+/**
+ * The type Update user request dto.
+ */
 @Getter
 public class UpdateUserRequestDto {
 
