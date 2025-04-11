@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 
 /**
- * The type User service.
+ * 회원 서비스
  */
 @Service
 @RequiredArgsConstructor
@@ -27,12 +27,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final RetiredEmailRepository retiredEmailRepository;
 
-
     /**
-     * Sign up response dto.
+     * 회원가입
      *
      * @param requestDto the request dto
-     * @return the sign up response dto
+     * @return the signup response dto
      */
     public SignUpResponseDto signUp(SignUpRequestDto requestDto) {
 
@@ -52,7 +51,7 @@ public class UserService {
     }
 
     /**
-     * Find by id user response dto.
+     * 회원 식별번호 조회
      *
      * @param id the id
      * @return the user response dto
@@ -62,9 +61,8 @@ public class UserService {
         return new UserResponseDto(findUser);
     }
 
-
     /**
-     * Update user response dto.
+     * 회원 정보 변경
      *
      * @param id          the id
      * @param requestDto  the request dto
@@ -79,7 +77,7 @@ public class UserService {
     }
 
     /**
-     * Update password user response dto.
+     * 비밀번호 변경
      *
      * @param id          the id
      * @param requestDto  the request dto

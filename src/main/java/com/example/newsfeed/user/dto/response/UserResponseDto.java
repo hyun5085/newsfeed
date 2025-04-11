@@ -8,6 +8,9 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
+/**
+ * 유저 응답 Dto
+ */
 @Getter
 public class UserResponseDto {
 
@@ -24,6 +27,11 @@ public class UserResponseDto {
 
     private final String hobby;
 
+    /**
+     * Instantiates a new User response dto.
+     *
+     * @param user the user
+     */
     public UserResponseDto(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
@@ -32,6 +40,12 @@ public class UserResponseDto {
         this.hobby = user.getHobby();
     }
 
+    /**
+     * 회원가입 저장
+     *
+     * @param user the user
+     * @return the signup response dto
+     */
     public static SignUpResponseDto from(User user) {
         return new SignUpResponseDto(
                 user.getId(),

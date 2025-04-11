@@ -1,9 +1,6 @@
 package com.example.newsfeed.boards.controller;
 
-import com.example.newsfeed.boards.dto.BoardResponseDto;
-import com.example.newsfeed.boards.dto.CreateBoardRequestDto;
-import com.example.newsfeed.boards.dto.DetailBoardResponseDto;
-import com.example.newsfeed.boards.dto.UpdateBoardRequestDto;
+import com.example.newsfeed.boards.dto.*;
 import com.example.newsfeed.boards.entity.Board;
 import com.example.newsfeed.boards.service.BoardService;
 import com.example.newsfeed.common.Const;
@@ -33,7 +30,7 @@ public class BoardController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/boards")
-    public ResponseEntity<BoardResponseDto> createBoard(@RequestBody CreateBoardRequestDto createBoardRequestDto,
+    public ResponseEntity<DetailBoardResponseDto> createBoard(@RequestBody CreateBoardRequestDto createBoardRequestDto,
                                                         @RequestHeader("Authorization") String authorizationHeader
 //                                                        HttpSession session
     ) {
@@ -58,9 +55,9 @@ public class BoardController {
 //        }
         Long userId = jwtUtil.extractUserId(token); // JWT에서 사용자 ID 추출
 
-        BoardResponseDto boardResponseDto = boardService.create(createBoardRequestDto.getContents(), userId);
+        DetailBoardResponseDto detailBoardResponseDto = boardService.create(createBoardRequestDto.getContents(), userId);
 
-        return new ResponseEntity<>(boardResponseDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(detailBoardResponseDto, HttpStatus.CREATED);
     }
 
 //    @PostMapping("/boards/like")
@@ -69,20 +66,54 @@ public class BoardController {
 //    }
 
     @GetMapping("/boards")
-    public ResponseEntity<List<BoardResponseDto>> findAll() {
+    public ResponseEntity<List<FeedResponseDto>> findAll() {
 
-        List<BoardResponseDto> boardResponseDto = boardService.findAll();
+        List<FeedResponseDto> feedResponseDto = boardService.findAll();
+
+        return new ResponseEntity<>(feedResponseDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/boards/limit/{pagination}")
+    public ResponseEntity<List<FeedResponseDto>> findBoardAll(@PathVariable int pagination
+//            , @RequestHeader("Authorization") String authorizationHeader
+    ) {
+
+        // Authorization 헤더에서 JWT 토큰을 추출 (Bearer 방식)
+//        String token = authorizationHeader.substring(7); // "Bearer " 제거
+//
+//        // 토큰 검증
+//        if (!jwtUtil.validateToken(token)) {
+//            throw new CustomException(ErrorCode.UNAUTHORIZED);
+//        }
+
+//        Long userId = jwtUtil.extractUserId(token); // JWT에서 사용자 ID 추출
+        int limit = 10 * pagination;
+
+        List<FeedResponseDto> feedResponseDto = boardService.findBoardAll(limit);
+
+        return new ResponseEntity<>(feedResponseDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/boards/follower/{pagination}")
+    public ResponseEntity<List<BoardResponseDto>> findBoardFollowerAll(@PathVariable int pagination
+//            , @RequestHeader("Authorization") String authorizationHeader
+    ) {
+
+        // Authorization 헤더에서 JWT 토큰을 추출 (Bearer 방식)
+//        String token = authorizationHeader.substring(7); // "Bearer " 제거
+//
+//        // 토큰 검증
+//        if (!jwtUtil.validateToken(token)) {
+//            throw new CustomException(ErrorCode.UNAUTHORIZED);
+//        }
+
+//        Long userId = jwtUtil.extractUserId(token); // JWT에서 사용자 ID 추출
+        int limit = 10 * pagination;
+
+        List<BoardResponseDto> boardResponseDto = boardService.findBoardFollowerAll(limit);
 
         return new ResponseEntity<>(boardResponseDto, HttpStatus.OK);
     }
-
-//    @GetMapping("/boards/pagination")
-//    public ResponseEntity<List<BoardResponseDto>> findTopAll(@RequestParam int page, @RequestParam int size) {
-//
-//        List<BoardResponseDto> boardResponseDto = boardService.findTopAll(page, size);
-//
-//        return new ResponseEntity<>(boardResponseDto, HttpStatus.OK);
-//    }
 
 
 
@@ -95,7 +126,7 @@ public class BoardController {
 
 
     @PatchMapping("/boards/{id}")
-    public ResponseEntity<Void> updateBoard(@PathVariable Long id, @RequestBody UpdateBoardRequestDto updateBoardRequestDto,
+    public ResponseEntity<DetailBoardResponseDto> updateBoard(@PathVariable Long id, @RequestBody UpdateBoardRequestDto updateBoardRequestDto,
                                             @RequestHeader("Authorization") String authorizationHeader
     ) {
         // Authorization 헤더에서 JWT 토큰을 추출 (Bearer 방식)
@@ -115,9 +146,9 @@ public class BoardController {
 //            throw new CustomException(ErrorCode.UNAUTHORIZED);
 //        }
 
-        boardService.updateBoard(id, updateBoardRequestDto.getContents(), userId);
+        DetailBoardResponseDto detailBoardResponseDto = boardService.updateBoard(id, updateBoardRequestDto.getContents(), userId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(detailBoardResponseDto, HttpStatus.OK);
     }
 
 
