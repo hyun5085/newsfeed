@@ -19,7 +19,7 @@ public class SecurityConfig2 {
 
     private final JwtUtil jwtUtil;
 
-    // JWT 인증 필터를 Bean으로 등록
+    // JWT 인증 필터를 Bean으로 등록 //
     @Bean
     public JwtAuthFilter jwtAuthFilter() {
         return new JwtAuthFilter(jwtUtil);
