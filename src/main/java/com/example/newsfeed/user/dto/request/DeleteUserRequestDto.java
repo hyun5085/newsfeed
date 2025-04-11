@@ -4,8 +4,9 @@ package com.example.newsfeed.user.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
-import java.time.LocalDate;
-
+/**
+ * 삭제 요청 Dto
+ */
 @Getter
 public class DeleteUserRequestDto {
 

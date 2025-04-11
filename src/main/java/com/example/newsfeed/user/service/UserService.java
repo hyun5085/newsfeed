@@ -16,8 +16,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 
+/**
+ * 회원 서비스
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -25,6 +27,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final RetiredEmailRepository retiredEmailRepository;
 
+    /**
+     * 회원가입
+     *
+     * @param requestDto the request dto
+     * @return the signup response dto
+     */
     public SignUpResponseDto signUp(SignUpRequestDto requestDto) {
 
         // 🔒 이미 탈퇴한 이메일인지 확인
@@ -42,29 +50,56 @@ public class UserService {
         return SignUpResponseDto.from(saveUser);
     }
 
+    /**
+     * 회원 식별번호 조회
+     *
+     * @param id the id
+     * @return the user response dto
+     */
     public UserResponseDto findById(Long id) {
-        User findUser = userRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User findUser = userRepository.findByIdOrElseThrow(id);
         return new UserResponseDto(findUser);
     }
 
+    /**
+     * 회원 정보 변경
+     *
+     * @param id          the id
+     * @param requestDto  the request dto
+     * @param loginUserId the login user id
+     * @return the user response dto
+     */
     @Transactional
     public UserResponseDto updateUser(Long id, UpdateUserRequestDto requestDto, Long loginUserId) {
-        User findUser = userRepository.findById(loginUserId).orElseThrow(() ->
-                new CustomException(ErrorCode.USER_NOT_FOUND));
+        User findUser = userRepository.findByIdOrElseThrow(id);
         findUser.updateUser(id, requestDto);
         return new UserResponseDto(findUser);
     }
 
+    /**
+     * 비밀번호 변경
+     *
+     * @param id          the id
+     * @param requestDto  the request dto
+     * @param loginUserId the login user id
+     * @return the user response dto
+     */
     @Transactional
     public UserResponseDto updatePassword(Long id, UpdatePasswordRequestDto requestDto, Long loginUserId) {
-        User findUser = userRepository.findById(loginUserId).orElseThrow(() ->
-                new CustomException(ErrorCode.USER_NOT_FOUND));
+        User findUser = userRepository.findByIdOrElseThrow(id);
         findUser.updatePassword(id, requestDto);
         return new UserResponseDto(findUser);
     }
 
+    /**
+     * 삭제
+     *
+     * @param id          the id
+     * @param requestDto  the request dto
+     * @param loginUserId the login user id
+     */
     public void delete(Long id, DeleteUserRequestDto requestDto, Long loginUserId) {
-        User findUser = userRepository.findById(loginUserId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User findUser = userRepository.findByIdOrElseThrow(id);
         // ✅ 탈퇴 이메일 저장
         RetiredEmail retiredEmail = new RetiredEmail(findUser.getEmail());
         retiredEmailRepository.save(retiredEmail);

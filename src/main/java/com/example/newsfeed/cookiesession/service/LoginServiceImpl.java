@@ -1,5 +1,6 @@
 package com.example.newsfeed.cookiesession.service;
 
+import com.example.newsfeed.cookiesession.service.LoginService;
 import com.example.newsfeed.cookiesession.repository.LoginRepository;
 import com.example.newsfeed.exception.CustomException;
 import com.example.newsfeed.exception.ErrorCode;
@@ -32,6 +33,12 @@ public class LoginServiceImpl implements LoginService {
 
         // 로그인 성공 시 유저 객체 반환
         return user;
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return loginRepository.findUserByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
 }

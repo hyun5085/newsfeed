@@ -13,7 +13,7 @@ public enum ErrorCode {
     COMMENT_NOT_BELONG_TO_BOARD("CM005", "댓글이 해당 게시글에 속하지 않습니다.", HttpStatus.BAD_REQUEST),
 
     //board
-    BOARD_NOT_FOUND("B001", "해당 게시글이 존재하지 않습니다. !", HttpStatus.NOT_FOUND),
+    BOARD_NOT_FOUND("B001", "해당 게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     BOARD_CREATE_UNAUTHORIZED("B002", "해당 로그인된 사용자만 게시글을 생성할 수 있습니다.", HttpStatus.UNAUTHORIZED),
     BOARD_UPDATE_UNAUTHORIZED("B003", "해당 게시글의 작성자만 수정할 수 있습니다.", HttpStatus.UNAUTHORIZED),
     BOARD_DELETE_UNAUTHORIZED("B004", "해당 게시글의 작성자만 삭제할 수 있습니다.", HttpStatus.UNAUTHORIZED),
@@ -28,8 +28,13 @@ public enum ErrorCode {
 
     //user
     EMAIL_ALREADY_RETIRED("U001", "해당 이메일은 재사용할 수 없습니다.", HttpStatus.BAD_REQUEST),
-    EMAIL_DUPLICATED("U001", "이미 사용자가 있습니다.", HttpStatus.BAD_REQUEST);
+    EMAIL_DUPLICATED("U001", "이미 사용자가 있습니다.", HttpStatus.BAD_REQUEST),
 
+    //follow
+    FOLLOW_LOGIN_USER("F001", "본인의 이메일입니다.", HttpStatus.BAD_REQUEST),
+    FOLLOW_NOT_FOUND("F002", "이메일이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+    FOLLOW_ALREADY_FOLLOW("F003", "이미 팔로우중 입니다.", HttpStatus.ALREADY_REPORTED);
+//    FOLLOW_NONE_FOLLOW("F004", "팔로우 관계가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
 
     private final String code;
     private final String message;

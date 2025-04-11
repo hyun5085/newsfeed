@@ -5,8 +5,7 @@ import com.example.newsfeed.comment.dto.request.CreateCommentRequestDto;
 import com.example.newsfeed.comment.dto.response.CommentResponseDto;
 import com.example.newsfeed.comment.dto.response.CreateCommentResponseDto;
 import com.example.newsfeed.comment.service.CommentService;
-import com.example.newsfeed.common.Const;
-import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
+import com.example.newsfeed.cookiesession.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,65 +22,63 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
+    private final JwtUtil jwtUtil;
 
     /**
-     * 댓글 생성*
+     * 댓글 생성
      *
      * @param requestDto
      * @parameter boardId
      */
     @PostMapping("/boards/{boardId}/comments")
     public ResponseEntity<CreateCommentResponseDto> createComment(
-            @SessionAttribute(name = Const.LOGIN_USER) LoginResponseDto loginUser,
+            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Long boardId,
             @Valid @RequestBody CreateCommentRequestDto requestDto) {
+        String token = authorizationHeader.substring(7);
+        log.info("생성 url : /boards/{boardId}/comments");
+        Long userId = jwtUtil.extractUserId(token);
 
-        log.info("Comment 생성");
-        Long userId = loginUser.getId();
-        log.info(String.valueOf(userId));
         CreateCommentResponseDto saveComment = commentService.save(userId, boardId, requestDto);
         return ResponseEntity.ok(saveComment);
     }
 
     /**
-     * 댓글 전체 조회
-     * 완료
-     *
+     * 댓글 전체 조회, 페이지네이션 조회
+     * ex )
+     * /boards/{boardId}/comments 일 경우 전체 조회
+     * /boards/{boardId}/comments?page=2 로 들어올 경우 페이지네이션 처리
      * @param boardId
+     * @param page : 페이지네이션으로 조회
+     * @return
      */
     @GetMapping("/boards/{boardId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> findCommentsByBoardId(
-            @PathVariable Long boardId
-    ) {
-        log.info("전체 조회");
-        //  Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId);
-        List<CommentResponseDto> commentList = commentService.findCommentsByBoardId(boardId);
-        return ResponseEntity.ok(commentList);
-    }
-    // TODO: 페이지네이션
-
-    @GetMapping("/boards/{boardId}/comments/pages")
-    public ResponseEntity<Page<CommentResponseDto>> findCommentsByBoardId(
+    public ResponseEntity<?> findCommentsByBoardId(
             @PathVariable Long boardId,
-            @RequestParam(defaultValue = "0") int page
+            @RequestParam(required = false) Integer page
     ) {
-        Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId, page);
-        return ResponseEntity.ok(commentPage);
+        if (page == null) {
+            // 전체 리스트 조회
+            List<CommentResponseDto> commentList = commentService.findCommentsByBoardId(boardId);
+            return ResponseEntity.ok(commentList);
+        } else {
+            // 페이지네이션 조회
+            Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId, page);
+            return ResponseEntity.ok(commentPage);
+        }
     }
 
     /**
      * 댓글 단건 조회
      *
-     * @param boardId
      * @param id
      */
-    @GetMapping("/boards/{boardId}/comments/{id}")
+    @GetMapping("/comments/{id}")
     public ResponseEntity<CommentResponseDto> findCommentById(
-            @PathVariable Long boardId,
             @PathVariable Long id
     ) {
         log.info("단건 조회");
-        CommentResponseDto findComment = commentService.findByBoardId(boardId, id);
+        CommentResponseDto findComment = commentService.findById(id);
         return ResponseEntity.ok(findComment);
     }
 
@@ -95,13 +92,15 @@ public class CommentController {
      */
     @PutMapping("/comments/{id}")
     public ResponseEntity<CommentResponseDto> updateComment(
-            @SessionAttribute(name = Const.LOGIN_USER) LoginResponseDto loginUser,
+            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Long id,
             @Valid @RequestBody CommentUpdateRequestDto requestDto
     ) {
+        String token = authorizationHeader.substring(7);
+        Long userId = jwtUtil.extractUserId(token);
+
         log.info("댓글 수정");
-        Long userId = loginUser.getId();
-        log.info(String.valueOf(userId));
+
         CommentResponseDto updateComment = commentService.updateComments(id, userId, requestDto);
         return ResponseEntity.ok(updateComment);
     }
@@ -116,13 +115,14 @@ public class CommentController {
      */
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<Void> deleteComment(
-            @SessionAttribute(name = Const.LOGIN_USER) LoginResponseDto loginUser,
+            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Long id
     ) {
         log.info("댓글 삭제");
-        Long userId = loginUser.getId();
+        String token = authorizationHeader.substring(7);
+        Long userId = jwtUtil.extractUserId(token);
+
         commentService.deleteComment(id, userId);
-        log.info(String.valueOf(userId));
         return ResponseEntity.ok().build();
     }
 }
