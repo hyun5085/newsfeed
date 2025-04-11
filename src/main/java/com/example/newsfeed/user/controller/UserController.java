@@ -1,7 +1,5 @@
 package com.example.newsfeed.user.controller;
 
-import com.example.newsfeed.common.Const;
-import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
 import com.example.newsfeed.cookiesession.util.JwtUtil;
 import com.example.newsfeed.user.dto.request.DeleteUserRequestDto;
 import com.example.newsfeed.user.dto.request.SignUpRequestDto;
@@ -10,8 +8,6 @@ import com.example.newsfeed.user.dto.request.UpdateUserRequestDto;
 import com.example.newsfeed.user.dto.response.SignUpResponseDto;
 import com.example.newsfeed.user.dto.response.UserResponseDto;
 import com.example.newsfeed.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
