@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * The type User controller.
+ * 회원 컨트롤러
  */
 @RestController
 @RequestMapping("/api/users")
@@ -28,7 +28,7 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     /**
-     * Sign up response entity.
+     * 회원가입
      *
      * @param requestDto the request dto
      * @return the response entity
@@ -40,7 +40,7 @@ public class UserController {
     }
 
     /**
-     * Find by id response entity.
+     * 회원 식별번호 조회
      *
      * @param id the id
      * @return the response entity
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     /**
-     * Update user response entity.
+     * 회원 정보 변경
      *
      * @param token      the token
      * @param id         the id
@@ -71,7 +71,7 @@ public class UserController {
     }
 
     /**
-     * Update password response entity.
+     * 비밀번호 변경
      *
      * @param token      the token
      * @param id         the id
@@ -91,7 +91,7 @@ public class UserController {
 
 
     /**
-     * Delete response entity.
+     * 삭제 기능
      *
      * @param authorizationHeader the authorization header
      * @param id                  the id

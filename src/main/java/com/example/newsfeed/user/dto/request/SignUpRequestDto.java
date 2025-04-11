@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 /**
- * The type Sign up request dto.
+ * 회원가입 요청 Dto
  */
 @Getter
 public class SignUpRequestDto {
@@ -31,14 +31,4 @@ public class SignUpRequestDto {
     private LocalDate birthday;
 
     private String hobby;
-
-    public static SignUpResponseDto from(User user) {
-        return new SignUpResponseDto(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getBirthday(),
-                user.getHobby()
-        );
-    }
 }

@@ -12,6 +12,9 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
+/**
+ * 회원 테이블
+ */
 @Getter
 @Entity
 @Table(name = "users")

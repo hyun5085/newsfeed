@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 /**
- * The type Delete user request dto.
+ * 삭제 요청 Dto
  */
 @Getter
 public class DeleteUserRequestDto {
