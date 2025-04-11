@@ -31,17 +31,20 @@ public class User extends BaseEntity {
     @Convert(converter = PasswordConverter.class)
     private String password;
 
-    @Column
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
-    @Column
     private String hobby;
 
     public User() {
 
     }
 
+    /**
+     * Instantiates a new User.
+     *
+     * @param requestDto the request dto
+     */
     public User(SignUpRequestDto requestDto) {
         this.username = requestDto.getUsername();
         this.password = requestDto.getPassword();
@@ -50,6 +53,12 @@ public class User extends BaseEntity {
         this.hobby = requestDto.getHobby();
     }
 
+    /**
+     * Update user.
+     *
+     * @param id         the id
+     * @param requestDto the request dto
+     */
     public void updateUser(Long id, UpdateUserRequestDto requestDto) {
         if (!requestDto.getPassword().equals(password)){
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
@@ -61,6 +70,12 @@ public class User extends BaseEntity {
         this.hobby = requestDto.getHobby();
     }
 
+    /**
+     * Update password.
+     *
+     * @param id         the id
+     * @param requestDto the request dto
+     */
     public void updatePassword(Long id, UpdatePasswordRequestDto requestDto) {
         if (!requestDto.getOldPassword().equals(getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
@@ -69,9 +84,16 @@ public class User extends BaseEntity {
         this.password = requestDto.getNewPassword();
     }
 
+    /**
+     * Validate password.
+     *
+     * @param id    the id
+     * @param input the input
+     */
     public void validatePassword(Long id, String input) {
         if (!this.password.equals(input)) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
+        this.id = id;
     }
 }
