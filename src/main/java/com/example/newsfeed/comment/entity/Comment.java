@@ -21,12 +21,12 @@ public class Comment extends BaseEntity {
     private String contents;
 
     // User 테이블과 연결
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     // Board 테이블과 연결
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
