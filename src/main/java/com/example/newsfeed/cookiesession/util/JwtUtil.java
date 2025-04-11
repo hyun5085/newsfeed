@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 
-@Component // Spring이 자동으로 관리해주는 객체(=Bean) 로 등록
+@Component // Spring이 자동으로 관리해주는 객체(=Bean) 로 등록 //
 public class JwtUtil {
     private static final String SECRET_KEY_STRING = "my-very-secret-jwt-key-that-is-long-enough!";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간
+    private static final long EXPIRATION_TIME = 1000 * 60 * 5; // 1시간
 
     private Key key;
 
