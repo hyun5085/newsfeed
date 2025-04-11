@@ -21,7 +21,8 @@ create table boards
     user_id    bigint,
     contents   longtext,
     created_at datetime(6),
-    updated_at datetime(6)
+    updated_at datetime(6),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE comments
