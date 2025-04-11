@@ -61,7 +61,7 @@ public class LoginController {
         response.setHeader("Authorization", "Bearer " + jwtToken);
 
 
-        LoginSuccessResponseDto successResponse = new LoginSuccessResponseDto(loginUser);
+        LoginSuccessResponseDto successResponse = new LoginSuccessResponseDto(loginUser, jwtToken);
 
 
         return ResponseEntity.ok(successResponse);
