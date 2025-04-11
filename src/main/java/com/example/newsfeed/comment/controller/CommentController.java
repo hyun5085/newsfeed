@@ -5,8 +5,6 @@ import com.example.newsfeed.comment.dto.request.CreateCommentRequestDto;
 import com.example.newsfeed.comment.dto.response.CommentResponseDto;
 import com.example.newsfeed.comment.dto.response.CreateCommentResponseDto;
 import com.example.newsfeed.comment.service.CommentService;
-import com.example.newsfeed.common.Const;
-import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
 import com.example.newsfeed.cookiesession.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,7 @@ public class CommentController {
     private final JwtUtil jwtUtil;
 
     /**
-     * 댓글 생성*
+     * 댓글 생성
      *
      * @param requestDto
      * @parameter boardId
@@ -38,7 +36,7 @@ public class CommentController {
             @PathVariable Long boardId,
             @Valid @RequestBody CreateCommentRequestDto requestDto) {
         String token = authorizationHeader.substring(7);
-        log.info("Comment 생성");
+        log.info("생성 url : /boards/{boardId}/comments");
         Long userId = jwtUtil.extractUserId(token);
 
         CreateCommentResponseDto saveComment = commentService.save(userId, boardId, requestDto);
@@ -55,7 +53,7 @@ public class CommentController {
     public ResponseEntity<List<CommentResponseDto>> findCommentsByBoardId(
             @PathVariable Long boardId
     ) {
-        log.info("전체 조회");
+        log.info("전체 조회 url : /boards/{boardId}/comments");
         //  Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId);
         List<CommentResponseDto> commentList = commentService.findCommentsByBoardId(boardId);
         return ResponseEntity.ok(commentList);
@@ -74,16 +72,14 @@ public class CommentController {
     /**
      * 댓글 단건 조회
      *
-     * @param boardId
      * @param id
      */
-    @GetMapping("/boards/{boardId}/comments/{id}")
+    @GetMapping("/comments/{id}")
     public ResponseEntity<CommentResponseDto> findCommentById(
-            @PathVariable Long boardId,
             @PathVariable Long id
     ) {
         log.info("단건 조회");
-        CommentResponseDto findComment = commentService.findByBoardId(boardId, id);
+        CommentResponseDto findComment = commentService.findByBoardId(id);
         return ResponseEntity.ok(findComment);
     }
 
