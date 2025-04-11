@@ -44,29 +44,28 @@ public class CommentController {
     }
 
     /**
-     * 댓글 전체 조회
-     * 완료
-     *
+     * 댓글 전체 조회, 페이지네이션 조회
+     * ex )
+     * /boards/{boardId}/comments 일 경우 전체 조회
+     * /boards/{boardId}/comments?page=2 로 들어올 경우 페이지네이션 처리
      * @param boardId
+     * @param page : 페이지네이션으로 조회
+     * @return
      */
     @GetMapping("/boards/{boardId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> findCommentsByBoardId(
-            @PathVariable Long boardId
-    ) {
-        log.info("전체 조회 url : /boards/{boardId}/comments");
-        //  Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId);
-        List<CommentResponseDto> commentList = commentService.findCommentsByBoardId(boardId);
-        return ResponseEntity.ok(commentList);
-    }
-
-    // 페이지네이션
-    @GetMapping("/boards/{boardId}/comments/pages")
-    public ResponseEntity<Page<CommentResponseDto>> findCommentsByBoardId(
+    public ResponseEntity<?> findCommentsByBoardId(
             @PathVariable Long boardId,
-            @RequestParam(defaultValue = "0") int page
+            @RequestParam(defaultValue = "0", required = false) Integer page
     ) {
-        Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId, page);
-        return ResponseEntity.ok(commentPage);
+        if (page == null) {
+            // 전체 리스트 조회
+            List<CommentResponseDto> commentList = commentService.findCommentsByBoardId(boardId);
+            return ResponseEntity.ok(commentList);
+        } else {
+            // 페이지네이션 조회
+            Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId, page);
+            return ResponseEntity.ok(commentPage);
+        }
     }
 
     /**
