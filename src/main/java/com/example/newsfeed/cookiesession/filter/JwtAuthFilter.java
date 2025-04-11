@@ -17,7 +17,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtAuthFilter implements Filter {
 
-    private static final String[] WHITE_LIST = {"/", "/api/users/signup", "/api/login", "/api/logout"};
+    private static final String[] WHITE_LIST = {"/", "/api/users/signup", "/api/login", "/api/logout", "/api/users/*"};
     private final JwtUtil jwtUtil;
 
 
