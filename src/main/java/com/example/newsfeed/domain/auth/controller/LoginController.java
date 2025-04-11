@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/login")
 @RequiredArgsConstructor
 public class LoginController {
 
@@ -26,12 +26,10 @@ public class LoginController {
     private final JwtUtil jwtUtil; // ✅ 추가해줘야 함
 
 
-    @PostMapping("/login")
+    @PostMapping
     public ResponseEntity<LoginSuccessResponseDto> login(@RequestBody LoginRequestDto loginRequestDto,
                                                          HttpServletResponse response,
                                                          HttpServletRequest request) {
-
-
 
         // 로그인 시도
         System.out.println("Attempting to log in user: " + loginRequestDto.getEmail());
