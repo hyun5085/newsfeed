@@ -31,6 +31,7 @@ public class BoardService {
 
         User findUser = userRepository.findByIdOrElseThrow(userId);
 
+
         Board board = new Board(contents);
         board.setUser(findUser);
 
