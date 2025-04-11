@@ -16,13 +16,13 @@ public class LikeController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/comments/{commentId}/likes")
-    public ResponseEntity<LikeResponseDto> CreateLike(
+    public ResponseEntity<LikeResponseDto> createLike(
             @PathVariable Long commentId,
             @RequestHeader("Authorization") String authorizationHeader
     ) {
         String token = authorizationHeader.substring(7);
         Long userId = jwtUtil.extractUserId(token);
-        LikeResponseDto likeDto = likeService.CreateLike(commentId, userId);
+        LikeResponseDto likeDto = likeService.createLike(commentId, userId);
         return ResponseEntity.ok(likeDto);
     }
 
