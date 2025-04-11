@@ -17,7 +17,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtAuthFilter implements Filter {
 
-    private static final String[] WHITE_LIST = {"/", "/api/users/signup", "/api/login", "/api/logout"};
+    private static final String[] WHITE_LIST = {"/", "/api/users/signup", "/api/login", "/api/logout", "/api/users/*"};
     private final JwtUtil jwtUtil;
 
 
@@ -32,7 +32,7 @@ public class JwtAuthFilter implements Filter {
         log.info("JWT 인증 필터 실행, 요청 URI: {}", requestURI);
 
         if (!isWhiteList(requestURI)) {
-            // 요청 헤더에서 Authorization 토큰 추출
+            // 요청 헤더에서 Authorization 토큰 추출 //
             String authHeader = httpRequest.getHeader("Authorization");
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {

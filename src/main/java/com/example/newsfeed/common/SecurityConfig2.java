@@ -19,7 +19,7 @@ public class SecurityConfig2 {
 
     private final JwtUtil jwtUtil;
 
-    // JWT 인증 필터를 Bean으로 등록
+    // JWT 인증 필터를 Bean으로 등록 //
     @Bean
     public JwtAuthFilter jwtAuthFilter() {
         return new JwtAuthFilter(jwtUtil);
@@ -35,7 +35,7 @@ public class SecurityConfig2 {
                 // URL 별 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 URL 설정 (화이트리스트)
-                        .requestMatchers("/", "/api/login", "/api/users/signup").permitAll()
+                        .requestMatchers("/", "/api/login", "/api/users/signup", "/api/users/*").permitAll()
                         // 그 외 모든 요청은 인증된 사용자만 접근 허용
                         .anyRequest().authenticated()
                 )
