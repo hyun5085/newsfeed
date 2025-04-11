@@ -78,7 +78,7 @@ public class CommentController {
             @PathVariable Long id
     ) {
         log.info("단건 조회");
-        CommentResponseDto findComment = commentService.findByBoardId(id);
+        CommentResponseDto findComment = commentService.findById(id);
         return ResponseEntity.ok(findComment);
     }
 
