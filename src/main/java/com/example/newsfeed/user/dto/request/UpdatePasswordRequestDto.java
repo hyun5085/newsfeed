@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 /**
- * The type Update password request dto.
+ * 비밀번호 요청 Dto
  */
 @Getter
 public class UpdatePasswordRequestDto {
@@ -24,6 +24,13 @@ public class UpdatePasswordRequestDto {
     )
     private final String newPassword;
 
+    /**
+     * 비밀번호 변경
+     *
+     * @param id          the id
+     * @param oldPassword the old password
+     * @param newPassword the new password
+     */
     public UpdatePasswordRequestDto(Long id, String oldPassword, String newPassword) {
         this.id = id;
         this.oldPassword = oldPassword;
