@@ -61,10 +61,11 @@ public class UserController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> updateUser(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequestDto requestDto
     ) {
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
         Long loginUserId = jwtUtil.extractUserId(token); // JwtUtil에서 userId 추출
         UserResponseDto responseDto = userService.updateUser(id, requestDto, loginUserId);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
@@ -80,10 +81,11 @@ public class UserController {
      */
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponseDto> updatePassword(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Long id,
             @Valid @RequestBody UpdatePasswordRequestDto requestDto
     ) {
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
         Long loginUserId = jwtUtil.extractUserId(token);
         UserResponseDto responseDto = userService.updatePassword(id, requestDto, loginUserId);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);

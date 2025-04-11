@@ -57,7 +57,7 @@ public class User extends BaseEntity {
     }
 
     /**
-     * Update user.
+     * 회원 업데이트
      *
      * @param id         the id
      * @param requestDto the request dto
@@ -74,7 +74,7 @@ public class User extends BaseEntity {
     }
 
     /**
-     * Update password.
+     * 비밀번호 변경
      *
      * @param id         the id
      * @param requestDto the request dto
@@ -88,7 +88,7 @@ public class User extends BaseEntity {
     }
 
     /**
-     * Validate password.
+     * 비밀번호 확인
      *
      * @param id    the id
      * @param input the input
