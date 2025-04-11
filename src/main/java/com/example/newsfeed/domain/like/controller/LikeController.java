@@ -8,14 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/comments/{commentId}/likes")
 @RequiredArgsConstructor
 public class LikeController {
 
     private final LikeService likeService;
     private final JwtUtil jwtUtil;
 
-    @PostMapping("/comments/{commentId}/likes")
+    @PostMapping
     public ResponseEntity<LikeResponseDto> createLike(
             @PathVariable Long commentId,
             @RequestHeader("Authorization") String authorizationHeader

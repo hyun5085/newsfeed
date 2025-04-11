@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/boards")
 @RequiredArgsConstructor
 public class BoardController {
 
     private final BoardService boardService;
     private final JwtUtil jwtUtil;
 
-    @PostMapping("/boards")
+    @PostMapping
     public ResponseEntity<DetailBoardResponseDto> createBoard(@RequestBody CreateBoardRequestDto createBoardRequestDto,
                                                               @RequestHeader("Authorization") String authorizationHeader
 //                                                        HttpSession session
@@ -58,7 +58,7 @@ public class BoardController {
 //
 //    }
 
-    @GetMapping("/boards")
+    @GetMapping
     public ResponseEntity<List<FeedResponseDto>> findAll() {
 
         List<FeedResponseDto> feedResponseDto = boardService.findAll();
@@ -66,7 +66,7 @@ public class BoardController {
         return new ResponseEntity<>(feedResponseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/boards/limit/{pagination}")
+    @GetMapping("/limit/{pagination}")
     public ResponseEntity<List<FeedResponseDto>> findBoardAll(@PathVariable int pagination
 //            , @RequestHeader("Authorization") String authorizationHeader
     ) {
@@ -87,7 +87,7 @@ public class BoardController {
         return new ResponseEntity<>(feedResponseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/boards/follower/{pagination}")
+    @GetMapping("/follower/{pagination}")
     public ResponseEntity<List<FeedResponseDto>> findBoardFollowerAll(@PathVariable int pagination
 //            , @RequestHeader("Authorization") String authorizationHeader
     ) {
@@ -110,7 +110,7 @@ public class BoardController {
 
 
 
-    @GetMapping("/boards/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<DetailBoardResponseDto> findById(@PathVariable Long id) {
         DetailBoardResponseDto detailBoardResponseDto = boardService.findById(id);
 
@@ -118,7 +118,7 @@ public class BoardController {
     }
 
 
-    @PatchMapping("/boards/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<DetailBoardResponseDto> updateBoard(@PathVariable Long id, @RequestBody UpdateBoardRequestDto updateBoardRequestDto,
                                             @RequestHeader("Authorization") String authorizationHeader
     ) {
@@ -144,7 +144,7 @@ public class BoardController {
     }
 
 
-    @DeleteMapping("/boards/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBoard(@PathVariable Long id,
                                             @RequestHeader("Authorization") String authorizationHeader) {
 
