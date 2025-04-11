@@ -24,7 +24,8 @@ public enum ErrorCode {
     //user
     USER_NOT_FOUND("L001", "해당 유저는 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     INVALID_PASSWORD("L002", "비밀번호가 일치하지 않습니다.", HttpStatus.NOT_FOUND),
-    ALREADY_LOGGED_IN("L003", "이미 로그인된 상태입니다.", HttpStatus.BAD_REQUEST),
+    INCORRECT_PASSWORD("L003", "기존 비밀번호가 일치하지 않습니다.", HttpStatus.FORBIDDEN),
+    ALREADY_LOGGED_IN("L004", "이미 로그인된 상태입니다.", HttpStatus.BAD_REQUEST),
 
     //user
     EMAIL_ALREADY_RETIRED("U001", "해당 이메일은 재사용할 수 없습니다.", HttpStatus.BAD_REQUEST),
