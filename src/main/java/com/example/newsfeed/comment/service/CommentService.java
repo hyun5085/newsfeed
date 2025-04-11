@@ -41,13 +41,9 @@ public class CommentService {
      */
     @Transactional
     public CreateCommentResponseDto save(Long userId, Long boardId, CreateCommentRequestDto requestDto) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
+        User user = userRepository.findByIdOrElseThrow(userId);
 
-        Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
-        );
+        Board board = boardRepository.findByIdOrElseThrow(boardId);
         Comment comment = new Comment(user, board, requestDto.getContents());
         commentRepository.save(comment);
 
@@ -57,16 +53,14 @@ public class CommentService {
 
     /**
      * boardId의 게시물에 작성된 댓글 전체 조회
-     * 최신순으로 정렬
+     * 수정일 기준 최신날짜를 기준으로 내림차순
      *
      * @param boardId
      * @return List<CommentResponseDto>
      */
     @Transactional(readOnly = true)
     public List<CommentResponseDto> findCommentsByBoardId(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
-        );
+        Board board = boardRepository.findByIdOrElseThrow(boardId);
 
         List<Comment> commentList = commentRepository.findByBoardIdOrderByUpdatedAtDesc(board.getId());
 
@@ -78,18 +72,23 @@ public class CommentService {
 
     }
 
-    // 댓글 조회 페이지네이션, boardId에 해당하는 댓글들을 10개씩 조회
+    /**
+     * 댓글 조회 페이지네이션
+     * 수정일 기준 최신날짜를 기준으로 내림차순
+     * page : 페이지 번호, size : resource 수, 댓글 10개
+     *
+     * @param boardId
+     * @param page
+     * @return
+     */
+
     @Transactional(readOnly = true)
-    public Page<CommentResponseDto> findCommentsPaged(Long boardId, int page) {
-        Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new CustomException(ErrorCode.BOARD_NOT_FOUND)
-        );
-        // 수정일 기준 최신날짜를 기준으로 내림차순
-        // page : 페이지 번호, size : resource 수, 댓글 10개
+    public Page<CommentResponseDto> findCommentsPaged(Long boardId, Integer page) {
+        Board board = boardRepository.findByIdOrElseThrow(boardId);
+
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "updatedAt"));
         Page<Comment> commentPage = commentRepository.findAllByBoard_Id(board.getId(), pageable);
 
-        // Page<CommentResponseDto> dtoPage = commentPage.map(CommentResponseDto::from);
         return commentPage.map(CommentResponseDto::from);
     }
 
@@ -101,8 +100,7 @@ public class CommentService {
      */
     @Transactional(readOnly = true)
     public CommentResponseDto findByBoardId(Long id) {
-
-        Comment comment = findById(id);
+        Comment comment = commentRepository.findByIdOrElseThrow(id);
         // comment 엔티티를 dto 내부에서 CommentResponseDto 변환
         return CommentResponseDto.from(comment);
     }
@@ -118,7 +116,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto updateComments(Long id, Long userId, CommentUpdateRequestDto requestDto) {
 
-        Comment findComment = findById(id);
+        Comment findComment = commentRepository.findByIdOrElseThrow(id);
         // 댓글의 작성자와 요청받은 식별자 값이 일치하지 않을 경우
         if (!findComment.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.COMMENT_UPDATE_UNAUTHORIZED);
@@ -138,20 +136,12 @@ public class CommentService {
      */
     @Transactional
     public void deleteComment(Long id, Long userId) {
-        Comment comment = findById(id);
+        Comment comment = commentRepository.findByIdOrElseThrow(id);
 
         if (!comment.getUser().getId().equals(userId) || !comment.getBoard().getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.COMMENT_DELETE_UNAUTHORIZED);
         }
         commentRepository.delete(comment);
-    }
-
-
-  // 요청한 id로 댓글을 반환하는 메서드, 댓글이 존재하지 않을 경우 COMMENT_NOT_FOUND 발생
-    private Comment findById(Long id) {
-        return commentRepository.findById(id).orElseThrow(
-                () -> new CustomException(ErrorCode.COMMENT_NOT_FOUND)
-        );
     }
 }
 
