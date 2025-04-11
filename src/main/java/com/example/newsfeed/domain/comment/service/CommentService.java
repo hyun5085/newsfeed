@@ -42,12 +42,11 @@ public class CommentService {
     @Transactional
     public CreateCommentResponseDto save(Long userId, Long boardId, CreateCommentRequestDto requestDto) {
         User user = userRepository.findByIdOrElseThrow(userId);
-
         Board board = boardRepository.findByIdOrElseThrow(boardId);
+
         Comment comment = new Comment(user, board, requestDto.getContents());
         commentRepository.save(comment);
 
-        //comment 엔티티를 dto 내부에서 CreateCommentResponseDto로 변환
         return CreateCommentResponseDto.from(comment);
     }
 
@@ -67,7 +66,6 @@ public class CommentService {
         if (commentList.isEmpty()) {
             throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
         }
-        // dto 내부에서 CommentResponseDto 변환
         return commentList.stream().map(CommentResponseDto::from).toList();
 
     }
@@ -93,7 +91,7 @@ public class CommentService {
     }
 
     /**
-     * 게시글의 댓글 단건 조회
+     * 댓글 단건 조회
      *
      * @param id
      * @return CommentResponseDto
@@ -101,7 +99,7 @@ public class CommentService {
     @Transactional(readOnly = true)
     public CommentResponseDto findById(Long id) {
         Comment comment = commentRepository.findByIdOrElseThrow(id);
-        // comment 엔티티를 dto 내부에서 CommentResponseDto 변환
+
         return CommentResponseDto.from(comment);
     }
 
@@ -115,15 +113,13 @@ public class CommentService {
      */
     @Transactional
     public CommentResponseDto updateComments(Long id, Long userId, CommentUpdateRequestDto requestDto) {
-
         Comment findComment = commentRepository.findByIdOrElseThrow(id);
         // 댓글의 작성자와 요청받은 식별자 값이 일치하지 않을 경우
         if (!findComment.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.COMMENT_UPDATE_UNAUTHORIZED);
         }
-
         findComment.update(requestDto.getContents());
-        // comment 엔티티를 dto 내부에서 CommentResponseDto 변환
+
         return CommentResponseDto.from(findComment);
     }
 

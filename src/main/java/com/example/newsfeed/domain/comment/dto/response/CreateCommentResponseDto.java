@@ -6,7 +6,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-// 댓글 생성 시 응답 dto
+/**
+ * 댓글 생성 응답 DTO
+ */
 @Getter
 public class CreateCommentResponseDto {
 
@@ -22,7 +24,12 @@ public class CreateCommentResponseDto {
     private LocalDateTime createdAt;
 
 
-    public CreateCommentResponseDto(Long id, Long boardId, Long userId, String userName, String contents, LocalDateTime createdAt) {
+    public CreateCommentResponseDto(Long id,
+                                    Long boardId,
+                                    Long userId,
+                                    String userName,
+                                    String contents,
+                                    LocalDateTime createdAt) {
         this.id = id;
         this.boardId = boardId;
         this.userId = userId;
@@ -31,8 +38,9 @@ public class CreateCommentResponseDto {
         this.createdAt = createdAt;
 
     }
-    // comment 엔티티를 CreateCommentResponseDto로 변환
-    // save 메서드에서 사용됨
+    /**
+     * Comment 엔티티를 CreateCommentResponseDto 변환
+     */
     public static CreateCommentResponseDto from(Comment comment){
         return new CreateCommentResponseDto(
                 comment.getId(),
