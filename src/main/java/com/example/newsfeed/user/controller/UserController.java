@@ -1,6 +1,8 @@
 package com.example.newsfeed.user.controller;
 
 import com.example.newsfeed.cookiesession.util.JwtUtil;
+import com.example.newsfeed.exception.CustomException;
+import com.example.newsfeed.exception.ErrorCode;
 import com.example.newsfeed.user.dto.request.DeleteUserRequestDto;
 import com.example.newsfeed.user.dto.request.SignUpRequestDto;
 import com.example.newsfeed.user.dto.request.UpdatePasswordRequestDto;
@@ -14,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The type User controller.
+ */
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -84,20 +89,29 @@ public class UserController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+
     /**
      * Delete response entity.
      *
-     * @param token      the token
-     * @param id         the id
-     * @param requestDto the request dto
+     * @param authorizationHeader the authorization header
+     * @param id                  the id
+     * @param requestDto          the request dto
      * @return the response entity
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Long id,
             @Valid @RequestBody DeleteUserRequestDto requestDto
     ) {
+        // Authorization 헤더에서 JWT 토큰을 추출 (Bearer 방식)
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
+
+        // 토큰 검증
+        if (!jwtUtil.validateToken(token)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
         Long loginUserId = jwtUtil.extractUserId(token);
         userService.delete(id, requestDto, loginUserId);
         return new ResponseEntity<>(HttpStatus.OK);
