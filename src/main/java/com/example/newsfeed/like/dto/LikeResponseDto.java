@@ -11,20 +11,26 @@ public class LikeResponseDto {
     private final Long contentId;
     private final Long userId;
     private final String userName;
-    private final boolean liked;
+    private boolean liked;
 
-    public LikeResponseDto(Long contentId, Long userId, String userName, boolean liked) {
+    public LikeResponseDto(Long contentId, Long userId, String userName,boolean liked) {
         this.contentId = contentId;
         this.userId = userId;
         this.userName = userName;
         this.liked = liked;
     }
+    public LikeResponseDto(Long contentId, Long userId, String userName) {
+        this.contentId = contentId;
+        this.userId = userId;
+        this.userName = userName;
+        this.liked = true;
+    }
 
-//    public static LikeResponseDto from(Like like){
-//        return new LikeResponseDto(
-//                like.getComment().getId(),
-//                like.getUser().getId(),
-//                like.getUser().getUsername()
-//        )
-//    }
+    public static LikeResponseDto from(Like like){
+        return new LikeResponseDto(
+                like.getComment().getId(),
+                like.getUser().getId(),
+                like.getUser().getUsername()
+        );
+    }
 }
