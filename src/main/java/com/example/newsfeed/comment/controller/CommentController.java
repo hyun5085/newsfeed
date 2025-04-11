@@ -5,8 +5,6 @@ import com.example.newsfeed.comment.dto.request.CreateCommentRequestDto;
 import com.example.newsfeed.comment.dto.response.CommentResponseDto;
 import com.example.newsfeed.comment.dto.response.CreateCommentResponseDto;
 import com.example.newsfeed.comment.service.CommentService;
-import com.example.newsfeed.common.Const;
-import com.example.newsfeed.cookiesession.dto.LoginResponseDto;
 import com.example.newsfeed.cookiesession.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,7 @@ public class CommentController {
     private final JwtUtil jwtUtil;
 
     /**
-     * 댓글 생성*
+     * 댓글 생성
      *
      * @param requestDto
      * @parameter boardId
@@ -38,7 +36,7 @@ public class CommentController {
             @PathVariable Long boardId,
             @Valid @RequestBody CreateCommentRequestDto requestDto) {
         String token = authorizationHeader.substring(7);
-        log.info("Comment 생성");
+        log.info("생성 url : /boards/{boardId}/comments");
         Long userId = jwtUtil.extractUserId(token);
 
         CreateCommentResponseDto saveComment = commentService.save(userId, boardId, requestDto);
@@ -46,44 +44,41 @@ public class CommentController {
     }
 
     /**
-     * 댓글 전체 조회
-     * 완료
-     *
+     * 댓글 전체 조회, 페이지네이션 조회
+     * ex )
+     * /boards/{boardId}/comments 일 경우 전체 조회
+     * /boards/{boardId}/comments?page=2 로 들어올 경우 페이지네이션 처리
      * @param boardId
+     * @param page : 페이지네이션으로 조회
+     * @return
      */
     @GetMapping("/boards/{boardId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> findCommentsByBoardId(
-            @PathVariable Long boardId
-    ) {
-        log.info("전체 조회");
-        //  Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId);
-        List<CommentResponseDto> commentList = commentService.findCommentsByBoardId(boardId);
-        return ResponseEntity.ok(commentList);
-    }
-
-    // 페이지네이션
-    @GetMapping("/boards/{boardId}/comments/pages")
-    public ResponseEntity<Page<CommentResponseDto>> findCommentsByBoardId(
+    public ResponseEntity<?> findCommentsByBoardId(
             @PathVariable Long boardId,
-            @RequestParam(defaultValue = "0") int page
+            @RequestParam(required = false) Integer page
     ) {
-        Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId, page);
-        return ResponseEntity.ok(commentPage);
+        if (page == null) {
+            // 전체 리스트 조회
+            List<CommentResponseDto> commentList = commentService.findCommentsByBoardId(boardId);
+            return ResponseEntity.ok(commentList);
+        } else {
+            // 페이지네이션 조회
+            Page<CommentResponseDto> commentPage = commentService.findCommentsPaged(boardId, page);
+            return ResponseEntity.ok(commentPage);
+        }
     }
 
     /**
      * 댓글 단건 조회
      *
-     * @param boardId
      * @param id
      */
-    @GetMapping("/boards/{boardId}/comments/{id}")
+    @GetMapping("/comments/{id}")
     public ResponseEntity<CommentResponseDto> findCommentById(
-            @PathVariable Long boardId,
             @PathVariable Long id
     ) {
         log.info("단건 조회");
-        CommentResponseDto findComment = commentService.findByBoardId(boardId, id);
+        CommentResponseDto findComment = commentService.findById(id);
         return ResponseEntity.ok(findComment);
     }
 
