@@ -7,6 +7,9 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
+/**
+ * The type Sign up request dto.
+ */
 @Getter
 public class SignUpRequestDto {
 

@@ -4,6 +4,9 @@ package com.example.newsfeed.user.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
+/**
+ * The type Delete user request dto.
+ */
 @Getter
 public class DeleteUserRequestDto {
 
