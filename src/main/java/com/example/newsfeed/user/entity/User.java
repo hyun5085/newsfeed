@@ -71,5 +71,6 @@ public class User extends BaseEntity {
         if (!this.password.equals(input)) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
+        this.id = id;
     }
 }
