@@ -27,17 +27,21 @@ public class UserResponseDto {
 
     private final String hobby;
 
+    private final String message;
+
     /**
      * Instantiates a new User response dto.
      *
      * @param user the user
+     * @param message
      */
-    public UserResponseDto(User user) {
+    public UserResponseDto(User user, String message) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.birthday = user.getBirthday();
         this.hobby = user.getHobby();
+        this.message = message;
     }
 
     /**

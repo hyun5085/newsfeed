@@ -58,7 +58,7 @@ public class UserService {
      */
     public UserResponseDto findById(Long id) {
         User findUser = userRepository.findByIdOrElseThrow(id);
-        return new UserResponseDto(findUser);
+        return new UserResponseDto(findUser, "팔로우 되었습니다.");
     }
 
     /**
@@ -71,9 +71,9 @@ public class UserService {
      */
     @Transactional
     public UserResponseDto updateUser(Long id, UpdateUserRequestDto requestDto, Long loginUserId) {
-        User findUser = userRepository.findByIdOrElseThrow(id);
+        User findUser = userRepository.findByIdOrElseThrow(loginUserId);
         findUser.updateUser(id, requestDto);
-        return new UserResponseDto(findUser);
+        return new UserResponseDto(findUser, "팔로우 되었습니다.");
     }
 
     /**
@@ -86,9 +86,9 @@ public class UserService {
      */
     @Transactional
     public UserResponseDto updatePassword(Long id, UpdatePasswordRequestDto requestDto, Long loginUserId) {
-        User findUser = userRepository.findByIdOrElseThrow(id);
+        User findUser = userRepository.findByIdOrElseThrow(loginUserId);
         findUser.updatePassword(id, requestDto);
-        return new UserResponseDto(findUser);
+        return new UserResponseDto(findUser, "Password updated successfully");
     }
 
     /**
@@ -99,7 +99,7 @@ public class UserService {
      * @param loginUserId the login user id
      */
     public void delete(Long id, DeleteUserRequestDto requestDto, Long loginUserId) {
-        User findUser = userRepository.findByIdOrElseThrow(id);
+        User findUser = userRepository.findByIdOrElseThrow(loginUserId);
         // ✅ 탈퇴 이메일 저장
         RetiredEmail retiredEmail = new RetiredEmail(findUser.getEmail());
         retiredEmailRepository.save(retiredEmail);
