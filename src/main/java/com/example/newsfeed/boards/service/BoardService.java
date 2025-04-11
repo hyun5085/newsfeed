@@ -49,9 +49,9 @@ public class BoardService {
         return boardRepository.findBoardAll(limit).stream().map(FeedResponseDto::toDto).toList();
     }
 
-    public List<BoardResponseDto> findBoardFollowerAll(int limit) {
+    public List<FeedResponseDto> findBoardFollowerAll(int limit) {
 
-        return boardRepository.findBoardFollowerAll(limit).stream().map(BoardResponseDto::toDto).toList();
+        return boardRepository.findBoardFollowerAll(limit).stream().map(FeedResponseDto::toDto).toList();
     }
 
     public DetailBoardResponseDto findById(Long id) {
