@@ -1,5 +1,7 @@
 package com.example.newsfeed.follow.service;
 
+import com.example.newsfeed.exception.CustomException;
+import com.example.newsfeed.exception.ErrorCode;
 import com.example.newsfeed.follow.dto.FollowRequestDto;
 import com.example.newsfeed.follow.dto.FollowResponseDto;
 import com.example.newsfeed.follow.dto.UnfollowResponseDto;
@@ -23,38 +25,46 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     @Transactional
-    public FollowResponseDto follow(FollowRequestDto requestDto) {
+    public FollowResponseDto follow(Long userId, FollowRequestDto requestDto) {
 
-        User follower = userRepository.findByEmail(requestDto.getFollowerEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Does not exist email "));
-        User followed = userRepository.findByEmail(requestDto.getFollowedEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Does not exist email "));
+        User findUser = userRepository.findById(userId).orElseThrow();
+
+        User follower = userRepository.findById(requestDto.getFollowerId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "follower not found"));
+
+        User followed = userRepository.findById(requestDto.getFollowedId())
+                .orElseThrow(() -> new CustomException(ErrorCode.FOLLOW_NOT_FOUND));
+
+        if (followRepository.findByFollowerAndFollowed(follower, followed).isPresent()) {
+            throw new CustomException(ErrorCode.FOLLOW_ALREADY_FOLLOW);
+        }
 
         Follow follow = new Follow(follower, followed);
 
         followRepository.save(follow);
 
-        return new FollowResponseDto(follower.getEmail(), followed.getEmail(), "팔로우 되었습니다.");
+        return new FollowResponseDto(follow.getId(), follower.getEmail(), followed.getEmail(), "팔로우 되었습니다.");
     }
 
-
     @Transactional
-    public UnfollowResponseDto unfollow(FollowRequestDto requestDto) {
+    public UnfollowResponseDto unfollow(Long id) {
 
-        User follower = userRepository.findByEmail(requestDto.getFollowerEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Does not exist email "));
-        User followed = userRepository.findByEmail(requestDto.getFollowedEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Does not exist email "));
+        Follow findById = followRepository.findById(id).orElseThrow();
 
-        Follow follow = new Follow(follower, followed);
+//        User follower = userRepository.findByEmail(requestDto.getFollowerEmail())
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "follower not found"));
+//
+//        User followed = userRepository.findByEmail(requestDto.getFollowedEmail())
+//                .orElseThrow(() -> new CustomException(ErrorCode.FOLLOW_NOT_FOUND));
 
-        followRepository.delete(follow);
+//        Follow follow = followRepository.findByFollowerAndFollowed(follower, followed)
+//                .orElseThrow(() -> new CustomException(ErrorCode.FOLLOW_NONE_FOLLOW));
+
+        followRepository.delete(findById);
 
         return new UnfollowResponseDto("언팔로우 되었습니다.");
     }
+
+
 
 }
