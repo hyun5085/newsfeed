@@ -11,11 +11,7 @@ import com.example.newsfeed.user.entity.User;
 import com.example.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +45,17 @@ public class FollowService {
 
     @Transactional
     public UnfollowResponseDto unfollow(Long userId, FollowRequestDto requestDto) {
+
+        User follower = userRepository.findByIdOrElseThrow(userId);
+
+        User followed = userRepository.findById(requestDto.getFollowedId())
+                .orElseThrow(() -> new CustomException(ErrorCode.FOLLOW_NOT_FOUND));
+
+        if (follower.getId().equals(followed.getId())) {
+            throw new CustomException(ErrorCode.FOLLOW_LOGIN_USER);
+        }
+
+        // 언팔로우 예외처리 넣음
 
         Follow findById = followRepository.findByIdOrElseThrow(userId);
 
