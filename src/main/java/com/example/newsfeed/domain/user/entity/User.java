@@ -82,7 +82,7 @@ public class User extends BaseEntity {
      */
     public void updatePassword(Long id, UpdatePasswordRequestDto requestDto) {
         if (!requestDto.getOldPassword().equals(getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+            throw new CustomException(ErrorCode.INCORRECT_PASSWORD);
         }
         this.id = id;
         this.password = requestDto.getNewPassword();
