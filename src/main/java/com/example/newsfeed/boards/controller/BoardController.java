@@ -95,7 +95,7 @@ public class BoardController {
     }
 
     @GetMapping("/boards/follower/{pagination}")
-    public ResponseEntity<List<BoardResponseDto>> findBoardFollowerAll(@PathVariable int pagination
+    public ResponseEntity<List<FeedResponseDto>> findBoardFollowerAll(@PathVariable int pagination
 //            , @RequestHeader("Authorization") String authorizationHeader
     ) {
 
@@ -110,9 +110,9 @@ public class BoardController {
 //        Long userId = jwtUtil.extractUserId(token); // JWT에서 사용자 ID 추출
         int limit = 10 * pagination;
 
-        List<BoardResponseDto> boardResponseDto = boardService.findBoardFollowerAll(limit);
+        List<FeedResponseDto> feedResponseDto = boardService.findBoardFollowerAll(limit);
 
-        return new ResponseEntity<>(boardResponseDto, HttpStatus.OK);
+        return new ResponseEntity<>(feedResponseDto, HttpStatus.OK);
     }
 
 
