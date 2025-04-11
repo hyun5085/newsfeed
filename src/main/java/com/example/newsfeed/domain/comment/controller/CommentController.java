@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@Slf4j
 public class CommentController {
 
     private final CommentService commentService;
@@ -34,13 +33,13 @@ public class CommentController {
     public ResponseEntity<CreateCommentResponseDto> createComment(
             @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Long boardId,
-            @Valid @RequestBody CreateCommentRequestDto requestDto) {
+            @Valid @RequestBody CreateCommentRequestDto requestDto
+    ) {
         String token = authorizationHeader.substring(7);
-        log.info("생성 url : /boards/{boardId}/comments");
         Long userId = jwtUtil.extractUserId(token);
 
         CreateCommentResponseDto saveComment = commentService.save(userId, boardId, requestDto);
-        return ResponseEntity.ok(saveComment);
+        return ResponseEntity.status(201).body(saveComment);
     }
 
     /**
@@ -48,8 +47,9 @@ public class CommentController {
      * ex )
      * /boards/{boardId}/comments 일 경우 전체 조회
      * /boards/{boardId}/comments?page=2 로 들어올 경우 페이지네이션 처리
+     *
      * @param boardId
-     * @param page : 페이지네이션으로 조회
+     * @param page    : 페이지네이션으로 조회
      * @return
      */
     @GetMapping("/boards/{boardId}/comments")
@@ -77,7 +77,6 @@ public class CommentController {
     public ResponseEntity<CommentResponseDto> findCommentById(
             @PathVariable Long id
     ) {
-        log.info("단건 조회");
         CommentResponseDto findComment = commentService.findById(id);
         return ResponseEntity.ok(findComment);
     }
@@ -99,8 +98,6 @@ public class CommentController {
         String token = authorizationHeader.substring(7);
         Long userId = jwtUtil.extractUserId(token);
 
-        log.info("댓글 수정");
-
         CommentResponseDto updateComment = commentService.updateComments(id, userId, requestDto);
         return ResponseEntity.ok(updateComment);
     }
@@ -118,7 +115,6 @@ public class CommentController {
             @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable Long id
     ) {
-        log.info("댓글 삭제");
         String token = authorizationHeader.substring(7);
         Long userId = jwtUtil.extractUserId(token);
 
