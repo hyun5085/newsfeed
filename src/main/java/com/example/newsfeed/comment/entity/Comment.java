@@ -3,12 +3,15 @@ package com.example.newsfeed.comment.entity;
 import com.example.newsfeed.boards.entity.Board;
 import com.example.newsfeed.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Entity
 @Table(name = "comments")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 생성자의 엑세스 레벨 지정
 public class Comment extends BaseEntity {
 
     @Id
@@ -26,9 +29,6 @@ public class Comment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
-
-    public Comment() {
-    }
 
     public Comment(User user, Board board, String contents) {
         this.user = user;
