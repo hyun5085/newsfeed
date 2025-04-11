@@ -99,7 +99,7 @@ public class CommentService {
      * @return CommentResponseDto
      */
     @Transactional(readOnly = true)
-    public CommentResponseDto findByBoardId(Long id) {
+    public CommentResponseDto findById(Long id) {
         Comment comment = commentRepository.findByIdOrElseThrow(id);
         // comment 엔티티를 dto 내부에서 CommentResponseDto 변환
         return CommentResponseDto.from(comment);
@@ -138,7 +138,7 @@ public class CommentService {
     public void deleteComment(Long id, Long userId) {
         Comment comment = commentRepository.findByIdOrElseThrow(id);
 
-        if (!comment.getUser().getId().equals(userId) || !comment.getBoard().getUser().getId().equals(userId)) {
+        if (!comment.getUser().getId().equals(userId) && !comment.getBoard().getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.COMMENT_DELETE_UNAUTHORIZED);
         }
         commentRepository.delete(comment);
