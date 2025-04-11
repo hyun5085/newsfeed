@@ -3,7 +3,9 @@ package com.example.newsfeed.domain.like.entity;
 import com.example.newsfeed.domain.comment.entity.Comment;
 import com.example.newsfeed.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "likes",
@@ -13,6 +15,7 @@ import lombok.Getter;
                         columnNames = {"comment_id", "user_id"}
                 )})
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +28,6 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    public Like() {
-    }
 
     public Like(Comment comment, User user) {
         this.comment = comment;
