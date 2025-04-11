@@ -55,7 +55,7 @@ public class CommentController {
     @GetMapping("/boards/{boardId}/comments")
     public ResponseEntity<?> findCommentsByBoardId(
             @PathVariable Long boardId,
-            @RequestParam(defaultValue = "0", required = false) Integer page
+            @RequestParam(required = false) Integer page
     ) {
         if (page == null) {
             // 전체 리스트 조회
