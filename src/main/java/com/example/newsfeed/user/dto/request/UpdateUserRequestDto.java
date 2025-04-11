@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 /**
- * The type Update user request dto.
+ * 회원 정보 수정 요청 Dto
  */
 @Getter
 public class UpdateUserRequestDto {
@@ -18,7 +18,8 @@ public class UpdateUserRequestDto {
     @NotBlank(message = "이름은 필수입니다.")
     private String username;
 
-    @Email(message = "이메일 형식이 올바르지 않습니다.")
+    @NotBlank(message = "이메일은 필수입니다.")
+    @Email(message = "유효한 이메일 형식이 아닙니다.")
     private String email;
 
     @NotBlank(message = "비밀번호는 필수입니다.")

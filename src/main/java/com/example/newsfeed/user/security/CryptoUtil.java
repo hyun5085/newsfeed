@@ -5,11 +5,17 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
 public class CryptoUtil {
-    // 예제용 키 (실제 서비스에선 보안상 환경변수 등에서 불러와야 함)
-    private static final String SECRET_KEY = "1234567890123456"; // 16자리 (AES-128)
+
+    private static final String SECRET_KEY = "1234567890123456";
 
     private static final String ALGORITHM = "AES";
 
+    /**
+     * 문자 암호화
+     *
+     * @param input the input
+     * @return the string
+     */
     public static String encrypt(String input) {
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
@@ -22,6 +28,12 @@ public class CryptoUtil {
         }
     }
 
+    /**
+     * 문자 복호화
+     *
+     * @param encrypted the encrypted
+     * @return the string
+     */
     public static String decrypt(String encrypted) {
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);

@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 이메일 조회 테이블
+ */
 @Entity
 @Getter
 @Table(name = "retired_email")
