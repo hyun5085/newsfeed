@@ -3,6 +3,7 @@ package com.example.newsfeed.domain.follow.service;
 import com.example.newsfeed.common.exception.CustomException;
 import com.example.newsfeed.common.exception.ErrorCode;
 import com.example.newsfeed.domain.follow.dto.request.FollowRequestDto;
+import com.example.newsfeed.domain.follow.dto.response.FollowListResponseDto;
 import com.example.newsfeed.domain.follow.dto.response.FollowResponseDto;
 import com.example.newsfeed.domain.follow.dto.response.UnfollowResponseDto;
 import com.example.newsfeed.domain.follow.entity.Follow;
@@ -12,6 +13,8 @@ import com.example.newsfeed.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +66,34 @@ public class FollowService {
 
         return new UnfollowResponseDto("언팔로우 되었습니다.");
     }
+
+    @Transactional
+    public List<FollowListResponseDto> getFollowingList(Long userId) {
+        User follower = userRepository.findByIdOrElseThrow(userId);
+
+        List<Follow> followings = followRepository.findAllByFollower(follower);
+
+        return followings.stream()
+                .map(follow -> {
+                    User followedUser = follow.getFollowed();
+                    return new FollowListResponseDto(followedUser.getId(), followedUser.getEmail());
+                })
+                .toList();
+    }
+
+    @Transactional
+    public List<FollowListResponseDto> getFollowerList(Long userId) {
+        User followed = userRepository.findByIdOrElseThrow(userId);
+
+        List<Follow> followers = followRepository.findAllByFollowed(followed);
+
+        return followers.stream()
+                .map(follow -> {
+                    User followerUser = follow.getFollower();
+                    return new FollowListResponseDto(followerUser.getId(), followerUser.getEmail());
+                })
+                .toList();
+    }
+
 
 }

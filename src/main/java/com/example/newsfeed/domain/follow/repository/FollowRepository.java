@@ -6,6 +6,7 @@ import com.example.newsfeed.domain.follow.entity.Follow;
 import com.example.newsfeed.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
@@ -15,4 +16,9 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     default Follow findByIdOrElseThrow(Long id) {
         return findById(id).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
+
+    List<Follow> findAllByFollower(User follower);
+
+    List<Follow> findAllByFollowed(User followed);
+
 }
