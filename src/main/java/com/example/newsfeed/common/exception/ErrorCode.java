@@ -38,11 +38,9 @@ public enum ErrorCode {
 //    FOLLOW_NONE_FOLLOW("F004", "팔로우 관계가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
 
     //Like
-    CANNOT_LIKE_OWN_COMMENT("L01","본인의 댓글에는 좋아요를 누를 수 없습니다.", HttpStatus.FORBIDDEN),
-    ALREADY_LIKED("L02","이미 좋아요를 누르셨습니다.",HttpStatus.BAD_REQUEST);
-
-
-
+    CANNOT_LIKE_OWN_COMMENT("L01", "본인의 댓글에는 좋아요를 누를 수 없습니다.", HttpStatus.FORBIDDEN),
+    ALREADY_LIKED("L02", "이미 좋아요를 누르셨습니다.", HttpStatus.BAD_REQUEST),
+    LIKE_NOT_FOUND("L03", "좋아요가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
     private final String code;
     private final String message;
     private final HttpStatus status;
