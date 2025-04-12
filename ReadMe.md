@@ -196,5 +196,5 @@ Spring Framework의 기초를 학습하고 실습하기 위해 진행한 팀 프
 
 ## 추가 정보 ℹ️
 
-- SQL 스크립트 
-- ERD 다이어그램: 
+- SQL 스크립트 [newsfeed.sql](newsfeed.sql)
+- ERD 다이어그램: ![img.png](img.png)
