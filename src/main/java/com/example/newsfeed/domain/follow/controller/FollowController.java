@@ -4,6 +4,7 @@ import com.example.newsfeed.common.util.JwtUtil;
 import com.example.newsfeed.common.exception.CustomException;
 import com.example.newsfeed.common.exception.ErrorCode;
 import com.example.newsfeed.domain.follow.dto.request.FollowRequestDto;
+import com.example.newsfeed.domain.follow.dto.response.FollowListResponseDto;
 import com.example.newsfeed.domain.follow.dto.response.FollowResponseDto;
 import com.example.newsfeed.domain.follow.dto.response.UnfollowResponseDto;
 import com.example.newsfeed.domain.follow.service.FollowService;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -59,5 +62,40 @@ public class FollowController {
 
         return new ResponseEntity<>(unfollowResponseDto, HttpStatus.OK);
     }
+
+    @GetMapping("/follow/followerlist")
+    public ResponseEntity<List<FollowListResponseDto>> getFollowingList(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+
+        String token = authorizationHeader.substring(7);
+
+        if (!jwtUtil.validateToken(token)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        Long userId = jwtUtil.extractUserId(token);
+
+        List<FollowListResponseDto> followingList = followService.getFollowingList(userId);
+
+        return new ResponseEntity<>(followingList, HttpStatus.OK);
+    }
+
+    @GetMapping("/follow/followedlist")
+    public ResponseEntity<List<FollowListResponseDto>> getFollowerList(
+            @RequestHeader("Authorization") String authorizationHeader) {
+
+        String token = authorizationHeader.substring(7);
+
+        if (!jwtUtil.validateToken(token)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        Long userId = jwtUtil.extractUserId(token);
+        List<FollowListResponseDto> followerList = followService.getFollowerList(userId);
+
+        return new ResponseEntity<>(followerList, HttpStatus.OK);
+    }
+
 
 }
