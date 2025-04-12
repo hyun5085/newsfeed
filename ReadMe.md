@@ -72,8 +72,11 @@ Spring Framework의 기초를 학습하고 실습하기 위해 진행한 팀 프
 
 | 기능     | Method | URL              | ✅ Request               | ✅ Response                                                                                                | Error Response                                         | Status Code                                              |
 |----------|--------|------------------|-------------------------|---------------------------------------------------------------------------------------------------------------|--------------------------------------------------------|----------------------------------------------------------|
-| 팔로우   | POST   | `/api/follow`    | ` { "followedId": 2 } ` | ` { "id": 1, "followerEmail": "abc1@abc.com", "followedEmail": "abc2@abc2.com", "message": "팔로우 되었습니다." } ` | `400 Bad Request`: 이메일 중복 <br> `404 Not Found`: 사용자 없음 | `201 Created` |
+| 팔로우   | POST   | `/api/follow`    | ` { "followedId": 2 } ` | ` { "id": 1, "followerEmail": "abc1@abc.com", "followedEmail": "abc2@abc.com", "message": "팔로우 되었습니다." } ` | `400 Bad Request`: 이메일 중복 <br> `404 Not Found`: 사용자 없음 | `201 Created` |
 | 언팔로우 | DELETE | `/api/unfollow`  | ` { "followedId": 2 } ` | ` { "message": "언팔로우 되었습니다." } `                                                                      | `208 Already Reported`: 팔로우 중복 <br> `404 Not Found`: 사용자 없음                   | `200 OK`  |
+| 팔로우 리스트  | GET    | `/api/follow/followerlist` | `토큰 필요`   | `[{ "userId": 2, "email": "abc2@abc.com" }, { "userId": 3, "email": "abc3@abc.com" }, { "userId": 4, "email": "abc4@abc.com" }]` | X | `200 OK` |
+| 팔로워 리스트  | GET   | `/api/unfollow/followedlist` | `토큰 필요`  | `{ "userId": 2, "email": "abc2@abc.com" }, { "userId": 3, "email": "abc3@abc.com" }, { "userId": 4, "email": "abc4@abc.com" }` | X | `200 OK` |
+
 
 ---
 
@@ -196,5 +199,5 @@ Spring Framework의 기초를 학습하고 실습하기 위해 진행한 팀 프
 
 ## 추가 정보 ℹ️
 
-- SQL 스크립트 
-- ERD 다이어그램: 
+- SQL 스크립트 [newsfeed.sql](newsfeed.sql)
+- ERD 다이어그램: ![img.png](img.png)

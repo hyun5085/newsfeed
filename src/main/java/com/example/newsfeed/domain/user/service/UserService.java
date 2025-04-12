@@ -58,7 +58,7 @@ public class UserService {
      */
     public UserResponseDto findById(Long id) {
         User findUser = userRepository.findByIdOrElseThrow(id);
-        return new UserResponseDto(findUser, "팔로우 되었습니다.");
+        return new UserResponseDto(findUser, id + "번이(가) 조회되었습니다.");
     }
 
     /**
@@ -73,7 +73,7 @@ public class UserService {
     public UserResponseDto updateUser(Long id, UpdateUserRequestDto requestDto, Long loginUserId) {
         User findUser = userRepository.findByIdOrElseThrow(loginUserId);
         findUser.updateUser(id, requestDto);
-        return new UserResponseDto(findUser, "팔로우 되었습니다.");
+        return new UserResponseDto(findUser, "수정이 완료됐습니다.");
     }
 
     /**
