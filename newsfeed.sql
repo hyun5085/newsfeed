@@ -47,7 +47,7 @@ create table follows
     constraint uc_follower_followed unique (follower_id, followed_id)
 );
 
-CREATE TABLE likes
+CREATE TABLE comment_likes
 (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
     comment_id BIGINT NOT NULL,

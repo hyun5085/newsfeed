@@ -1,32 +1,33 @@
 package com.example.newsfeed.domain.like.dto;
 
-import com.example.newsfeed.domain.like.entity.Like;
+import com.example.newsfeed.domain.comment.entity.Comment;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 댓글 좋아요 응답 DTO
- */
+import java.util.List;
+
 @Getter
+@AllArgsConstructor
 public class LikeResponseDto {
+    // 댓글 id
+    private Long commentId;
+    // 총 좋아요 개수
+    private long totalLikes;
+    // 현재 유저가 해당 댓글에 좋아요를 눌렀는지 여부
+    private boolean likedByCurrentUser;
+    // 좋아요한 userList
+    private List<LikedUserDto> likedUsers;
 
-    private final Long commentId;
-    private final Long userId;
-    private final String userName;
-    private boolean liked;
 
-    public LikeResponseDto(Long commentId, Long userId, String userName,boolean liked) {
-        this.commentId = commentId;
-        this.userId = userId;
-        this.userName = userName;
-        this.liked = liked;
-    }
-
-    public static LikeResponseDto from(Like like){
+    public static LikeResponseDto of(Comment comment,
+                                     long totalLikes,
+                                     boolean likedByCurrentUser,
+                                     List<LikedUserDto> likedUsers) {
         return new LikeResponseDto(
-                like.getComment().getId(),
-                like.getUser().getId(),
-                like.getUser().getUsername(),
-                true
+                comment.getId(),
+                totalLikes,
+                likedByCurrentUser,
+                likedUsers
         );
     }
 }
