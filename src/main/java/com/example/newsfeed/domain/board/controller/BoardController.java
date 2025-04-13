@@ -60,11 +60,21 @@ public class BoardController {
     }
 
     @GetMapping("/follower/{pagination}")
-    public ResponseEntity<List<FeedResponseDto>> findBoardFollowerAll(@PathVariable int pagination
+    public ResponseEntity<List<FeedResponseDto>> findBoardFollowerAll(@PathVariable int pagination, @RequestHeader("Authorization") String authorizationHeader
     ) {
+
+        // Authorization 헤더에서 JWT 토큰을 추출 (Bearer 방식)
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
+
+        // 토큰 검증
+        if (!jwtUtil.validateToken(token)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        Long userId = jwtUtil.extractUserId(token); // JWT에서 사용자 ID 추출
+
         int limit = 10 * pagination;
 
-        List<FeedResponseDto> feedResponseDto = boardService.findBoardFollowerAll(limit);
+        List<FeedResponseDto> feedResponseDto = boardService.findBoardFollowerAll(userId, limit);
 
         return new ResponseEntity<>(feedResponseDto, HttpStatus.OK);
     }
